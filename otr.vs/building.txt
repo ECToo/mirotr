@@ -1,0 +1,70 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gpgvs
+building gnupg related projects with Visual Studio
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sub-project: otr.vs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+DIRECTORY TREE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First step is to have the same directory tree as me, otherwise you have to
+(can) change the paths inside visual studio workspaces.
+This is the tree I have choosen
+
+[anywhere]\libotr-2.0.2
+[anywhere]\libotr-2.0.2\libotr\[original package]
+
+[anywhere]\otrproxy-0.3.0
+[anywhere]\otrproxy-0.3.0\otrproxy\[original package]
+
+[anywhere]\wxWidgets-2.6.1
+[anywhere]\wxWidgets-2.6.1\wxWidgets\[original package]
+
+basically you have to choose you "root" directory, after then you must
+respect this order:
+- "root"\projectWithVersion\project
+
+if you take code from cvs, create the directory "project.head" and
+make cvs checkout inside "project.head", to have (example)
+"root"\libotr.head\libotr\...
+
+Then download or take from cvs the otr.vs project, and put inside
+"root"\otr.vs
+you should have
+
+"root"\otr.vs
+"root"\otr.vs\inc.vs
+"root"\otr.vs\libotr.head.vs
+"root"\otr.vs\libotr-2.0.2.vs
+"root"\otr.vs\otrproxy-0.3.0.vs
+"root"\otr.vs\otrproxy.head.vs
+
+
+LIBGCRYPT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To build otr projects you need libgcrypt:
+first of all you have to define one environment variable
+- LIBGCRYPTDEV
+which points to a directory with libgcrypt include and lib:
+inside you should put the various libgcrypt versions (or the
+same everywhere, be careful when doing this).
+that's beacause I do not want to force anyone to use the libgcrypt
+provided with gpg.vs project: in this way you can download or compile
+your own versions of libgcrypt and use it with otr projects
+
+The "LIBGCRYPT" directory must have inside
+%LIBGCRYPTDEV%\inc
+%LIBGCRYPTDEV%\lib\debug\dll
+%LIBGCRYPTDEV%\lib\debug\static
+%LIBGCRYPTDEV%\lib\release\dll
+%LIBGCRYPTDEV%\lib\release\static
+
+because workspaces will search libgcrypt includes and libs using
+such paths.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Authors:
+          Francesco Picasso
+          mr.s0rr0w@gmail.com
+          www.s0rr0w.net
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
