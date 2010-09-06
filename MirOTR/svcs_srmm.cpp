@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "mirotrmenu.h"
 HANDLE hEventIconPressed;
 HICON hIconNotSecure, hIconFinished, hIconPrivate, hIconUnverified;
 
@@ -38,6 +39,8 @@ int SVC_IconPressed(WPARAM wParam, LPARAM lParam) {
 		char *proto = (char *)CallService(MS_PROTO_GETCONTACTBASEPROTO, (WPARAM)hContact, 0);
 		if(proto && DBGetContactSettingByte(hContact, proto, "ChatRoom", 0))
 			return 0;
+		ShowOTRMenu(hContact, sicd->clickLocation);
+		/*
 		HMENU hMenu = LoadMenu(hInst, MAKEINTRESOURCE(IDR_CONTEXT));
 		CallService(MS_LANGPACK_TRANSLATEMENU, (WPARAM)hMenu, 0);
 		TrustLevel level = (TrustLevel) db_dword_get(hContact, MODULENAME, "TrustLevel", TRUST_NOT_PRIVATE);
@@ -125,6 +128,7 @@ int SVC_IconPressed(WPARAM wParam, LPARAM lParam) {
 		DeleteObject(bmpIconFinished);
 		DeleteObject(bmpIconNotSecure);
 		DeleteObject(bmpIconUnverified);
+		*/
 	}
 	
 	return 0;
@@ -212,13 +216,17 @@ void InitSRMM() {
 		// hook the window events so that we can can change the status of the icon
 		
 		hEventIconPressed = HookEvent(ME_MSG_ICONPRESSED, SVC_IconPressed);
+		InitMirOTRMenu();
 	}
 }
 void DeinitSRMM() {
-	UnhookEvent(hEventIconPressed);
-	ReleaseIcon(ICON_NOT_PRIVATE, 0);
-	ReleaseIcon(ICON_FINISHED, 0);
-	ReleaseIcon(ICON_PRIVATE, 0);
-	ReleaseIcon(ICON_UNVERIFIED, 0);
-	hIconNotSecure = hIconFinished = hIconPrivate = hIconUnverified =0;
+	if(options.bHaveSRMMIcons) {
+		UnhookEvent(hEventIconPressed);
+		ReleaseIcon(ICON_NOT_PRIVATE, 0);
+		ReleaseIcon(ICON_FINISHED, 0);
+		ReleaseIcon(ICON_PRIVATE, 0);
+		ReleaseIcon(ICON_UNVERIFIED, 0);
+		hIconNotSecure = hIconFinished = hIconPrivate = hIconUnverified =0;
+		UninitMirOTRMenu();
+	}
 }

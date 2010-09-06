@@ -172,6 +172,8 @@ DLLFUNC int Load(PLUGINLINK *link)
 
 	CreateServiceFunction(MS_OTR_MENUSTART, SVC_StartOTR);
 	CreateServiceFunction(MS_OTR_MENUSTOP, SVC_StopOTR);
+	CreateServiceFunction(MS_OTR_MENUREFRESH, SVC_RefreshOTR);
+	CreateServiceFunction(MS_OTR_MENUVERIFY, SVC_VerifyOTR);
 
 	// hook modules loaded for updater support
 	HookEvent(ME_SYSTEM_MODULESLOADED, ModulesLoaded);

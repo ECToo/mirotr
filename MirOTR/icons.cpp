@@ -57,3 +57,6 @@ HANDLE GetIconHandle(const char* name) {
 void ReleaseIcon(const char* name, int big) {
 	CallService( big ? MS_SKIN2_RELEASEICONBIG : MS_SKIN2_RELEASEICON, 0, (LPARAM)name );
 }
+void ReleaseIcon(HICON handle, int big) {
+	CallService( big ? MS_SKIN2_RELEASEICONBIG : MS_SKIN2_RELEASEICON, (WPARAM)handle, 0 );
+}

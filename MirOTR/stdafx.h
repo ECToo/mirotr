@@ -80,6 +80,8 @@ static const MUUID MIID_OTR = { 0x30f37d6, 0xdd32, 0x434d, { 0xbc, 0x64, 0x5b, 0
 
 #define MS_OTR_MENUSTART		MODULENAME"/Start"
 #define MS_OTR_MENUSTOP			MODULENAME"/Stop"
+#define MS_OTR_MENUREFRESH		MODULENAME"/Refresh"
+#define MS_OTR_MENUVERIFY		MODULENAME"/Verify"
 
 #define PREF_BYPASS_OTR 0x8000
 #define PREF_NO_HISTORY  0x10000

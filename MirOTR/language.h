@@ -14,6 +14,11 @@
 #define LANG_STATUS_PRIVATE					LPGEN("OTR Encryption: Private")
 #define LANG_STATUS_FINISHED				LPGEN("OTR Encryption: Finished")
 
+#define LANG_MENU_START						LPGEN("&Start OTR session")
+#define LANG_MENU_REFRESH					LPGEN("&Refresh OTR session")
+#define LANG_MENU_STOP						LPGEN("Sto&p OTR session")
+#define LANG_MENU_VERIFY					LPGEN("&Verify Fingerprint")
+
 #define LANG_SESSION_TERMINATED_OTR			LPGEN("OTR encrypted session with '%s' has been terminated")
 #define LANG_SESSION_REQUEST_OTR			LPGEN("Requesting OTR encrypted session with '%s'")
 #define LANG_SESSION_START_OTR				LPGEN("Beginning OTR encrypted session with '%s'")

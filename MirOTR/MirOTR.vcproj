@@ -344,6 +344,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\mirotrmenu.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\options.cpp"
 				>
 			</File>
@@ -419,6 +431,10 @@
 			</File>
 			<File
 				RelativePath=".\language.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mirotrmenu.h"
 				>
 			</File>
 			<File
