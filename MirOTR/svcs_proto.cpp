@@ -29,7 +29,9 @@ int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 		oldmessage_utf = oldmessage;
 	} else if(ccs->wParam & PREF_UNICODE) {
 		//TODO: check if this is correct or oldmessage[strlen(oldmessage)+1] is needed
-		oldmessage_utf = mir_utf8encodeW((wchar_t*)oldmessage);
+		//oldmessage_utf = mir_utf8encodeW((wchar_t*)oldmessage);
+		//should be the thing with strlen
+		oldmessage_utf = mir_utf8encodeW((wchar_t*)&oldmessage[strlen(oldmessage)+1]);
 	} else {
 		oldmessage_utf = mir_utf8encode(oldmessage);
 	}
@@ -138,7 +140,6 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 #endif
 
 	if (pre->flags & PREF_BYPASS_OTR)  { // bypass for our inline messages
-		//TODO: check, whether this can be removed (then OTR status info should be still saved)
 		return CallService(MS_PROTO_CHAINRECV, wParam, lParam);
 	}
 
