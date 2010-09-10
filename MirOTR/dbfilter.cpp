@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "dbfilter.h"
-static HANDLE hDBEventPreAdd, hDBEventAdded;
+static HANDLE hDBEventPreAdd, hDBEventAdded, hContactSettingChanged;
 static CRITICAL_SECTION RemoveChainCS={0}, *lpRemoveChainCS = &RemoveChainCS;
 static UINT_PTR timerId = 0;
 
@@ -219,10 +219,88 @@ INT_PTR OnDatabaseEventAdded(WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
+void FinishSession(HANDLE hContact) {
+	if (!hContact) return;
+	ConnContext *context = otrl_context_find_miranda(otr_user_state, hContact);
+	TrustLevel level = otr_context_get_trust(context);
+	if (level == TRUST_UNVERIFIED || level == TRUST_PRIVATE) {
+		otrl_context_force_finished(context);
+		//SetEncryptionStatus(hContact, TRUST_FINISHED);
+		otr_gui_gone_insecure(context->app_data, context);
+		//otrl_message_disconnect(otr_user_state, &ops, hContact, context->accountname, context->protocol, context->username);
+		//SetEncryptionStatus(hContact, TRUST_NOT_PRIVATE);
+	}
+	return;
+}
+
+
+// if it's a protocol going offline, attempt to send terminate session to all contacts of that protocol
+// (this would be hooked as the ME_CLIST_STATUSMODECHANGE handler except that event is sent *after* the proto goes offline)
+int StatusModeChange(WPARAM wParam, LPARAM lParam) {
+	int status = (int)wParam;
+
+	if(Miranda_Terminated() || status != ID_STATUS_OFFLINE ) return 0;
+	
+	const char *proto = (char *)lParam;
+	HANDLE hContact;
+
+	lib_cs_lock();
+	
+		ConnContext *context = otr_user_state->context_root;
+		while(context) {
+			if(context->msgstate == OTRL_MSGSTATE_ENCRYPTED && (proto == 0 || strcmp(proto, context->protocol) == 0)) {
+				hContact = context->app_data;
+				
+				if(hContact) {
+					otrl_message_disconnect(otr_user_state, &ops, hContact, context->accountname, context->protocol, context->username);
+					SetEncryptionStatus(hContact, TRUST_NOT_PRIVATE);
+				}
+				
+			}
+			context = context->next;
+		}
+	lib_cs_unlock();
+	
+	return 0;
+}
+
+INT_PTR OnContactSettingChanged(WPARAM wParam, LPARAM lParam) {
+	DBCONTACTWRITESETTING *cws = (DBCONTACTWRITESETTING *)lParam;
+	if (!lParam || strcmp(cws->szSetting, "Status") != 0) return 0;
+	HANDLE hContact = (HANDLE)wParam;
+	int status=0;
+	switch (cws->value.type){
+		case DBVT_WORD:
+			status = cws->value.wVal;
+			break;
+		case DBVT_BYTE:
+			status = cws->value.bVal;
+			break;
+		case DBVT_DWORD:
+			status = cws->value.dVal;
+			break;
+	}
+	if (status == ID_STATUS_OFFLINE) {
+		if (!hContact) {
+			// Protocol is going offline
+			// Terminate sessions with all contacts of that proto
+			StatusModeChange((WPARAM) ID_STATUS_OFFLINE, (LPARAM)cws->szModule);
+			return 0;
+		}else if(CallService(MS_PROTO_ISPROTOONCONTACT, (WPARAM)hContact, (LPARAM)MODULENAME)) {
+			// only care about contacts to which this filter is attached
+			FinishSession(hContact);
+		}
+	}
+
+
+	return 0;
+}
+
 void InitDBFilter() {
 	InitializeCriticalSectionAndSpinCount(lpRemoveChainCS, 500);
 	hDBEventPreAdd = HookEvent(ME_DB_EVENT_FILTER_ADD, OnDatabaseEventPreAdd);
 	hDBEventAdded = HookEvent(ME_DB_EVENT_ADDED, OnDatabaseEventAdded);
+	hContactSettingChanged = HookEvent(ME_DB_CONTACT_SETTINGCHANGED, OnContactSettingChanged);
 	timerId = SetTimer(0, 0, 1000, DeleteTimerProc);
 }
 void DeinitDBFilter() {
@@ -230,6 +308,8 @@ void DeinitDBFilter() {
 	hDBEventPreAdd = 0;
 	UnhookEvent(hDBEventAdded);
 	hDBEventAdded = 0;
+	UnhookEvent(hContactSettingChanged);
+	hContactSettingChanged=0;
 	if (timerId) KillTimer(0, timerId);
 	DeleteTimerProc(0,0,0,0);
 	DeleteCriticalSection(lpRemoveChainCS);

@@ -90,7 +90,8 @@ int SVC_VerifyOTR(WPARAM wParam, LPARAM lParam) {
 	HANDLE hContact = (HANDLE)wParam;
 	ConnContext *context = otrl_context_find_miranda(otr_user_state, (HANDLE)wParam);
 	if (!context) return 1;
-	VerifyContextDialog(context);	
+	//VerifyContextDialog(context);	
+	SMPInitDialog(context);
 	return 0;
 }
 

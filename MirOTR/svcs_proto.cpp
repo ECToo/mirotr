@@ -198,6 +198,8 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 	lib_cs_unlock();
 	/* Keep track of our current progress in the Socialist Millionaires'
 	* Protocol. */
+	
+	/*
 	if (context && ( (context->smstate->sm_prog_state == OTRL_SMP_PROG_CHEATED) ||
 			otrl_tlv_find(tlvs, OTRL_TLV_SMP1Q) ||
 			otrl_tlv_find(tlvs, OTRL_TLV_SMP1) ||
@@ -208,15 +210,16 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 	{
 		otr_abort_smp(context); // we do not support it (yet), notify partner to shorten wait time
 	}
+	*/
 
 
-	/*
 	if (context) {
-		nextMsg = context->smstate->nextExpected;
+		NextExpectedSMP nextMsg = context->smstate->nextExpected;
 
 		if (context->smstate->sm_prog_state == OTRL_SMP_PROG_CHEATED) {
 			otr_abort_smp(context);
-			otrg_dialog_update_smp(context, 0.0);
+			//otrg_dialog_update_smp(context, 0.0);
+			SMPDialogUpdate(context, 0);
 			context->smstate->nextExpected = OTRL_SMP_EXPECT1;
 			context->smstate->sm_prog_state = OTRL_SMP_PROG_OK;
 		} else {
@@ -229,8 +232,7 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 					char *question = (char *)tlv->data;
 					char *eoq = (char*)memchr(question, '\0', tlv->len);
 					if (eoq) {
-						otrg_dialog_socialist_millionaires_q(context,
-							question);
+						SMPDialogReply(context, question);
 					}
 				}
 			}
@@ -239,7 +241,7 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 				if (nextMsg != OTRL_SMP_EXPECT1)
 					otr_abort_smp(context);
 				else {
-					otrg_dialog_socialist_millionaires(context);
+					SMPDialogReply(context, NULL);
 				}
 			}
 			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP2);
@@ -247,8 +249,8 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 				if (nextMsg != OTRL_SMP_EXPECT2)
 					otr_abort_smp(context);
 				else {
-					otrg_dialog_update_smp(context, 0.6);
 					context->smstate->nextExpected = OTRL_SMP_EXPECT4;
+					SMPDialogUpdate(context, 60);					
 				}
 			}
 			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP3);
@@ -256,8 +258,9 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 				if (nextMsg != OTRL_SMP_EXPECT3)
 					otr_abort_smp(context);
 				else {
-					otrg_dialog_update_smp(context, 1.0);
 					context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+					SMPDialogUpdate(context, 100);
+					//otrg_dialog_update_smp(context, 1.0);
 				}
 			}
 			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP4);
@@ -265,19 +268,18 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 				if (nextMsg != OTRL_SMP_EXPECT4)
 					otr_abort_smp(context);
 				else {
-					otrg_dialog_update_smp(context, 1.0);
+					SMPDialogUpdate(context, 100);
+					//otrg_dialog_update_smp(context, 1.0);
 					context->smstate->nextExpected = OTRL_SMP_EXPECT1;
 				}
 			}
 			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP_ABORT);
 			if (tlv) {
-				otrg_dialog_update_smp(context, 0.0);
+				SMPDialogUpdate(context, 0);
 				context->smstate->nextExpected = OTRL_SMP_EXPECT1;
 			}
 		}
 	}
-	*/
-
 	otrl_tlv_free(tlvs);
 
 	mir_free(uname);

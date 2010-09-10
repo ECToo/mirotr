@@ -4,6 +4,25 @@
 #include <commctrl.h>
 #include <process.h>
 
+static void VerifyFingerprint(ConnContext *context, bool verify) {
+	TCHAR msg[1024];
+	if (verify) {
+		lib_cs_lock();
+		otrl_context_set_trust(context->active_fingerprint, "verified");
+		otrl_privkey_write_fingerprints(otr_user_state, g_fingerprint_store_filename);
+		lib_cs_unlock();
+		mir_sntprintf(msg, 1024, TranslateT(LANG_FINGERPRINT_VERIFIED), contact_get_nameT((HANDLE)context->app_data));
+	} else {
+		lib_cs_lock();
+		otrl_context_set_trust(context->active_fingerprint, NULL);
+		otrl_privkey_write_fingerprints(otr_user_state, g_fingerprint_store_filename);
+		lib_cs_unlock();
+		mir_sntprintf(msg, 1024, TranslateT(LANG_FINGERPRINT_NOT_VERIFIED), contact_get_nameT((HANDLE)context->app_data));
+	}
+	msg[1023] = '\0';
+	ShowMessage((HANDLE)context->app_data, msg);
+	SetEncryptionStatus(context->app_data, otr_context_get_trust(context));
+}
 
 INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -97,14 +116,56 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 	case WM_COMMAND: 
 		switch ( HIWORD( wParam )) {
 			case BN_CLICKED: 
-				switch ( LOWORD( wParam )) {	
-					case IDYES:
-					case IDNO:
-					case IDCANCEL:
-					case IDOK:
-						EndDialog(hwndDlg, LOWORD( wParam ));
+						{
+							ConnContext* context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+							TCHAR msg[1024];
+						switch ( LOWORD( wParam )) {
+							case IDCANCEL:
+								EndDialog(hwndDlg, LOWORD( wParam ));
+								break;
+							case IDOK:
+								GetDlgItemText(hwndDlg, IDC_CBO_SMP_CHOOSE, msg, 255);
+								if (_tcsncmp(msg, TranslateT(LANG_SMPTYPE_QUESTION), 255)==0) {
+									int len = SendDlgItemMessage(hwndDlg, IDC_EDT_SMP_FIELD1, WM_GETTEXTLENGTH, 0, 0);
+									TCHAR *question = new TCHAR[len+1];
+									GetDlgItemText(hwndDlg, IDC_EDT_SMP_FIELD1, question, len+1);
+									char *quest = mir_utf8encodeT(question);
+									delete question;
+
+									len = SendDlgItemMessage(hwndDlg, IDC_EDT_SMP_FIELD2, WM_GETTEXTLENGTH, 0, 0);
+									TCHAR *answer = new TCHAR[len+1];
+									GetDlgItemText(hwndDlg, IDC_EDT_SMP_FIELD2, answer, len+1);
+									char *ans = mir_utf8encodeT(answer);
+									delete answer;
+
+									otr_start_smp(context, quest, (const unsigned char*)ans, strlen(ans));
+									mir_free(quest);
+									mir_free(ans);
+
+								}else if (_tcsncmp(msg, TranslateT(LANG_SMPTYPE_PASSWORD), 255)==0) {
+									int len = SendDlgItemMessage(hwndDlg, IDC_EDT_SMP_FIELD2, WM_GETTEXTLENGTH, 0, 0);
+									TCHAR *answer = new TCHAR[len+1];
+									GetDlgItemText(hwndDlg, IDC_EDT_SMP_FIELD2, answer, len+1);
+									char *ans = mir_utf8encodeT(answer);
+									delete answer;
+
+									otr_start_smp(context, NULL, (const unsigned char*)ans, strlen(ans));
+									mir_free(ans);
+
+								}else break;
+								EndDialog(hwndDlg, LOWORD( wParam ));
+								break;
+							case IDYES:
+								VerifyFingerprint(context, true);
+								EndDialog(hwndDlg, LOWORD( wParam ));
+								break;
+							case IDNO:
+								VerifyFingerprint(context, false);
+								EndDialog(hwndDlg, LOWORD( wParam ));
+								break;
+						}
+						}
 						break;
-				}
 			case CBN_SELCHANGE:
 				switch ( LOWORD( wParam )) {	
 					case IDC_CBO_SMP_CHOOSE:
@@ -120,7 +181,7 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 
 							TCHAR buff[512];
 							GetDlgItemText(hwndDlg, IDC_CBO_SMP_CHOOSE, buff, 255);
-							if (_tcsncmp(buff, TranslateT(LANG_SMPTYPE_QUESTION), 255)) {
+							if (_tcsncmp(buff, TranslateT(LANG_SMPTYPE_QUESTION), 255)==0) {
 								if (trusted)
 									mir_sntprintf(buff, 512, TranslateT(LANG_OTR_SMPQUESTION_VERIFY_DESC), contact_get_nameT((HANDLE)context->app_data));
 								else
@@ -140,7 +201,7 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 								ShowWindow(GetDlgItem(hwndDlg, IDOK), SW_SHOWNA);
 								ShowWindow(GetDlgItem(hwndDlg, IDYES), SW_HIDE);
 								ShowWindow(GetDlgItem(hwndDlg, IDNO), SW_HIDE);
-							} else if (_tcsncmp(buff, TranslateT(LANG_SMPTYPE_PASSWORD), 255)) {
+							} else if (_tcsncmp(buff, TranslateT(LANG_SMPTYPE_PASSWORD), 255)==0) {
 								if (trusted)
 									mir_sntprintf(buff, 512, TranslateT(LANG_OTR_SMPPASSWORD_VERIFY_DESC), contact_get_nameT((HANDLE)context->app_data));
 								else
@@ -149,18 +210,18 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 								SetDlgItemText(hwndDlg, IDC_STC_SMP_INFO, buff);
 
 								SetDlgItemText(hwndDlg, IDC_EDT_SMP_FIELD1, _T(""));
-								SendDlgItemMessage(hwndDlg, IDC_EDT_SMP_FIELD1, EM_SETREADONLY, FALSE, 0);
-								SetDlgItemText(hwndDlg, IDC_STC_SMP_FIELD1, TranslateT(LANG_SMP_PASSWORD));
+								SendDlgItemMessage(hwndDlg, IDC_EDT_SMP_FIELD1, EM_SETREADONLY, TRUE, 0);
+								SetDlgItemText(hwndDlg, IDC_STC_SMP_FIELD1, _T(""));
 
 								SetDlgItemText(hwndDlg, IDC_EDT_SMP_FIELD2, _T(""));
-								SendDlgItemMessage(hwndDlg, IDC_EDT_SMP_FIELD2, EM_SETREADONLY, TRUE, 0);
-								SetDlgItemText(hwndDlg, IDC_STC_SMP_FIELD2, _T(""));
+								SendDlgItemMessage(hwndDlg, IDC_EDT_SMP_FIELD2, EM_SETREADONLY, FALSE, 0);
+								SetDlgItemText(hwndDlg, IDC_STC_SMP_FIELD2, TranslateT(LANG_SMP_PASSWORD));
 
 
 								ShowWindow(GetDlgItem(hwndDlg, IDOK), SW_SHOWNA);
 								ShowWindow(GetDlgItem(hwndDlg, IDYES), SW_HIDE);
 								ShowWindow(GetDlgItem(hwndDlg, IDNO), SW_HIDE);
-							} else if (_tcsncmp(buff, TranslateT(LANG_SMPTYPE_FINGERPRINT), 255)) {
+							} else if (_tcsncmp(buff, TranslateT(LANG_SMPTYPE_FINGERPRINT), 255)==0) {
 								if (trusted)
 									mir_sntprintf(buff, 512, TranslateT(LANG_OTR_FPVERIFY_DESC), contact_get_nameT((HANDLE)context->app_data));
 								else
@@ -186,8 +247,6 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 								SendDlgItemMessage(hwndDlg, IDC_EDT_SMP_FIELD2, EM_SETREADONLY, TRUE, 0);
 								SetDlgItemText(hwndDlg, IDC_STC_SMP_FIELD2, TranslateT(LANG_CONTACT_FINGERPRINT));
 
-								EnableWindow(GetDlgItem(hwndDlg, IDC_CBO_SMP_CHOOSE), FALSE);
-
 								ShowWindow(GetDlgItem(hwndDlg, IDOK), SW_HIDE);
 								ShowWindow(GetDlgItem(hwndDlg, IDYES), SW_SHOWNA);
 								ShowWindow(GetDlgItem(hwndDlg, IDNO), SW_SHOWNA);
@@ -205,6 +264,26 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 void SMPInitDialog(ConnContext* context) {
 	if (!context) return;
 	CreateDialogParamW(hInst, MAKEINTRESOURCE(IDD_SMP_INPUT), 0, DlgProcSMPInitProc, (LPARAM) context);
+}
+
+void SMPDialogUpdate(ConnContext *context, int percent) {
+	switch (percent){
+		case 0:
+			VerifyFingerprint(context, false);
+			ShowWarning(_T("SMP failed"));
+			break;
+		case 100:
+			VerifyFingerprint(context, true);
+			ShowWarning(_T("SMP successful"));
+			break;
+		default:
+			ShowWarning(_T("Received an SMP update"));
+	}
+}
+void SMPDialogReply(ConnContext *context, const char* question){
+	ShowError(_T("SMP requires user password (NOT IMPL YET)"));
+	otr_abort_smp(context);
+	//otr_continue_smp(context, pass, strlen(pass));
 }
 
 unsigned int CALLBACK verify_context_thread(void *param);
