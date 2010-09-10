@@ -263,7 +263,7 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 }
 void SMPInitDialog(ConnContext* context) {
 	if (!context) return;
-	CreateDialogParamW(hInst, MAKEINTRESOURCE(IDD_SMP_INPUT), 0, DlgProcSMPInitProc, (LPARAM) context);
+	CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_SMP_INPUT), 0, DlgProcSMPInitProc, (LPARAM) context);
 }
 
 void SMPDialogUpdate(ConnContext *context, int percent) {
