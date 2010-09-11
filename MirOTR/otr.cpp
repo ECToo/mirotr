@@ -28,16 +28,17 @@ OtrlMessageAppOps ops = {
 
 struct GenKeyData{
 	HWND dialog;
-	char *proto;
+	const char *proto;
 };
 
 static unsigned int CALLBACK generate_key_thread(void* param) {
 	CallService(MS_SYSTEM_THREAD_PUSH, 0, 0);
 	GenKeyData *data = (GenKeyData *)param;
-	lib_cs_lock();
+	//lib_cs_lock();
 	otrl_privkey_generate(otr_user_state, g_private_key_filename, data->proto, data->proto);
-	lib_cs_unlock();
+	//lib_cs_unlock();
 	PostMessage(data->dialog, WMU_ENDDIALOG, 0, 0);
+	mir_free(data);
 	CallService(MS_SYSTEM_THREAD_POP, 0, 0);
 	return 0;
 }
@@ -57,7 +58,7 @@ INT_PTR CALLBACK GenKeyDlgFunc(HWND hWndDlg, UINT msg, WPARAM wParam, LPARAM lPa
 				mir_sntprintf(buff, 256, TranslateT(LANG_GENERATE_KEY), proto);
 				mir_free(proto);
 				SetDlgItemText(hWndDlg, IDC_GENERATE, buff);
-				GenKeyData *data = new GenKeyData();
+				GenKeyData *data = (GenKeyData *)mir_calloc(sizeof(GenKeyData));
 				data->dialog = hWndDlg;
 				data->proto = (char*)lParam;
 				CloseHandle((HANDLE)_beginthreadex(0, 0, generate_key_thread, (void*)data, 0, 0));
@@ -105,7 +106,9 @@ extern "C" {
 		//DWORD tid;
 		//CloseHandle(CreateThread(0, 0, newKeyThread, (VOID *)nkd, 0, &tid));
 		//QueueUserAPC(newKeyAPC, Global::mainThread, (DWORD)nkd);
-		DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_GENKEYNOTIFY), GetDesktopWindow(), GenKeyDlgFunc, (LPARAM)protocol );
+		if (opdata) protocol = contact_get_proto((HANDLE)opdata);
+		if (!protocol) return;
+		DialogBoxParamW(hInst, MAKEINTRESOURCE(IDD_GENKEYNOTIFY), 0, GenKeyDlgFunc, (LPARAM)protocol );
 
 	}
 
