@@ -17,6 +17,8 @@ typedef enum {
 	TRUST_PRIVATE
 } TrustLevel;
 TrustLevel otr_context_get_trust(ConnContext *context);
+void VerifyFingerprint(ConnContext *context, bool verify);
+void VerifyFingerprintMessage(ConnContext *context, bool verify);
 
 void otrl_privkey_hash_to_humanT(TCHAR human[45], const unsigned char hash[20]);
 

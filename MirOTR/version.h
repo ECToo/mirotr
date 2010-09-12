@@ -8,7 +8,7 @@
 #define VER_BUILD				1
 
 #define __STRINGIZE(x)			#x
-#define VER_STRING				"0.9.1.1"
+#define VER_STRING				"0.9.4.1"
 
 #ifdef _UNICODE
 	#define SHORT_NAME_STRING 		"Miranda OTR"

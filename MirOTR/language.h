@@ -85,13 +85,22 @@
 #define LANG_YOUR_PRIVKEY					LPGEN("Your Fingerprint to tell your contact (use a trusted channel!)")
 #define LANG_CONTACT_FINGERPRINT			LPGEN("VERIFY: Fingerprint from contact")
 
-#define LANG_SMP_VERIFY_TITLE				LPGEN("OTR Authenticate %s")
-#define LANG_SMPTYPE_QUESTION				LPGEN("Question / Answer")
+#define LANG_SMP_VERIFY_TITLE				LPGEN("OTR Authenticate: %s (%s)")
+#define LANG_SMPTYPE_QUESTION				LPGEN("Challenge Question")
 #define	LANG_SMPTYPE_PASSWORD				LPGEN("Known Password")
 #define LANG_SMPTYPE_FINGERPRINT			LPGEN("Manual fingerprint comparison")
-#define LANG_SMP_ANSWER						LPGEN("Answer")
+#define LANG_SMP_ANSWER						LPGEN("Secret Answer")
 #define LANG_SMP_QUESTION					LPGEN("Question")
 #define LANG_SMP_PASSWORD					LPGEN("Password")
+
+#define LANG_SMP_SUCCESS					LPGEN("Authentication sucessful.")
+#define LANG_SMP_SUCCESS_VERIFY				LPGEN("You contact authenticated you sucessful. You can send your own request to authenticate him.")
+#define LANG_SMP_ERROR						LPGEN("Error during authentication.")
+#define LANG_SMP_FAILED						LPGEN("Authentication failed")
+#define LANG_SMP_IN_PROGRESS				LPGEN("Authentication for '%s' is already in progress.")
+
+#define LANG_SMP_PROGRESS_TITLE				LPGEN("OTR Authenticating: %s (%s)")
+#define LANG_SMP_PROGRESS_DESC				LPGEN("Authenticating contact:\n%s (%s)")
 
 #define LANG_OTR_SMPQUESTION_VERIFY_DESC	LPGEN("OTR encrypted session with '%s' (UNVERIFIED).\nUse a question only your partner can answer.")
 #define LANG_OTR_SMPQUESTION_VERIFIED_DESC	LPGEN("OTR encrypted session with '%s' (VERIFIED).\nVerify the session again using a question only your partner can answer.")
@@ -99,5 +108,9 @@
 #define LANG_OTR_SMPPASSWORD_VERIFY_DESC	LPGEN("OTR encrypted session with '%s' (UNVERIFIED).\nUse a known password.")
 #define LANG_OTR_SMPPASSWORD_VERIFIED_DESC	LPGEN("OTR encrypted session with '%s' (VERIFIED).\nVerify the session again using a known password.")
 
-#define LANG_FINGERPRINT_STILL_IN_USE		LPGEN("Fingerprint '%s' still in use in conversation with '%s'. You cannot delete it!")
-#define LANG_FINGERPRINT_NOT_DELETED		LPGEN("Fingerprint '%s' in use in conversation with '%s'. It could not be deleted!")
+#define LANG_OTR_SMPQUESTION_RESPOND_DESC	LPGEN("Your contact '%s' wants to verify your identity with a question only you can answer.")
+
+#define LANG_OTR_SMPPASSWORD_RESPOND_DESC	LPGEN("Your contact '%s' wants to verify your identity with a secret password you should know.")
+
+#define LANG_FINGERPRINT_STILL_IN_USE		LPGEN("Fingerprint '%s' still in use in conversation with '%s' (%s). You cannot delete it!")
+#define LANG_FINGERPRINT_NOT_DELETED		LPGEN("Fingerprint '%s' in use in conversation with '%s' (%s). It could not be deleted!")

@@ -71,6 +71,23 @@ TrustLevel otr_context_get_trust(ConnContext *context)
 	return level;
 }
 
+/* Set verification of fingerprint */
+void VerifyFingerprint(ConnContext *context, bool verify) {
+	lib_cs_lock();
+	otrl_context_set_trust(context->active_fingerprint, (verify)?"verified":NULL);
+	otrl_privkey_write_fingerprints(otr_user_state, g_fingerprint_store_filename);
+	lib_cs_unlock();
+	VerifyFingerprintMessage(context, verify);
+}
+
+void VerifyFingerprintMessage(ConnContext *context, bool verify) {
+	TCHAR msg[1024];
+	mir_sntprintf(msg, 1024, (verify)?TranslateT(LANG_FINGERPRINT_VERIFIED):TranslateT(LANG_FINGERPRINT_NOT_VERIFIED), contact_get_nameT((HANDLE)context->app_data));
+	msg[1023] = '\0';
+	ShowMessage((HANDLE)context->app_data, msg);
+	SetEncryptionStatus(context->app_data, otr_context_get_trust(context));
+}
+
 /* Convert a 20-byte hash value to a 45-byte human-readable value */
 void otrl_privkey_hash_to_humanT(TCHAR human[45], const unsigned char hash[20])
 {

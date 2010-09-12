@@ -848,12 +848,14 @@ static INT_PTR CALLBACK DlgProcMirOTROptsFinger(HWND hwndDlg, UINT msg, WPARAM w
 					case FPM_VERIFY:
 						otrl_context_set_trust(it->first, "verified");
 						if (it->first == it->first->context->active_fingerprint) 
-							SetEncryptionStatus((HANDLE)it->first->context->app_data, otr_context_get_trust(it->first->context));
+							VerifyFingerprint(it->first->context, true);
+							//SetEncryptionStatus((HANDLE)it->first->context->app_data, otr_context_get_trust(it->first->context));
 						break;
 					case FPM_NOTRUST:
 						otrl_context_set_trust(it->first, NULL);
 						if (it->first == it->first->context->active_fingerprint) 
-							SetEncryptionStatus((HANDLE)it->first->context->app_data, otr_context_get_trust(it->first->context));
+							VerifyFingerprint(it->first->context, false);
+							//SetEncryptionStatus((HANDLE)it->first->context->app_data, otr_context_get_trust(it->first->context));
 						break;
 				}
 			}

@@ -15,8 +15,7 @@ int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 	char *proto = (char *)CallService(MS_PROTO_GETCONTACTBASEPROTO, (WPARAM)ccs->hContact, 0);
 	if(proto && g_metaproto && strcmp(proto, g_metaproto) == 0) // bypass for metacontacts
 		return CallService(MS_PROTO_CHAINSEND, wParam, lParam);
-	char *username = contact_get_id(ccs->hContact);
-	if(!proto || !username) return 1; // error
+	if(!proto || !ccs->hContact) return 1; // error
 
 	gcry_error_t err;
 	char *newmessage = 0;
@@ -44,6 +43,7 @@ int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 		return CallService(MS_PROTO_CHAINSEND, wParam, lParam);
 	}
 
+	char *username = contact_get_id(ccs->hContact);
     err = otrl_message_sending(otr_user_state, &ops, (void*)ccs->hContact,
 	    proto, proto, username, oldmessage_utf, NULL, &newmessage,
 	    add_appdata, (void*)ccs->hContact);
@@ -148,9 +148,8 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 		return 1; //error
 	else if(proto && g_metaproto && strcmp(proto, g_metaproto) == 0) // bypass for metacontacts
 		return CallService(MS_PROTO_CHAINRECV, wParam, lParam);
-	
-	char *uname = contact_get_id(ccs->hContact);
-	if(!uname) return 1; // error
+
+	if (!ccs->hContact) return 1; //error
 
 	char *oldmessage = pre->szMessage;
 	char *oldmessage_utf = NULL;
@@ -172,11 +171,13 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 	ConnContext *context;
 	//NextExpectedSMP nextMsg;
 
+	char *uname = contact_get_id(ccs->hContact);
 	lib_cs_lock();
 	ignore_msg = otrl_message_receiving(otr_user_state, &ops, (void*)ccs->hContact,
 		proto, proto, uname, oldmessage_utf,
 		&newmessage, &tlvs, add_appdata, (void*)ccs->hContact);
 	lib_cs_unlock();
+	mir_free(uname);
 
 	if( !(pre->flags & PREF_UTF)) mir_free(oldmessage_utf);
 	oldmessage_utf = NULL;
@@ -281,8 +282,6 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 		}
 	}
 	otrl_tlv_free(tlvs);
-
-	mir_free(uname);
 
 	/* If we're supposed to ignore this incoming message (because it's a
 	* protocol message), set it to NULL, so that other plugins that
