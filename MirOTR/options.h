@@ -33,7 +33,7 @@ typedef struct {
 	bool end_offline, end_window_close;
 
 	// temporary options
-	bool bHaveMetaContacts, bHavePopups, bHaveSRMMIcons;
+	bool bHaveMetaContacts, bHavePopups, bHaveSRMMIcons, bHaveSecureIM;
 
 } Options;
 
@@ -51,7 +51,7 @@ typedef std::map<Fingerprint*, FPModify> FPModifyMap;
 int OptInit(WPARAM wParam, LPARAM lParam);
 
 void LoadOptions();
-void SaveOptions(ContactPolicyMap *contact_policies);
+void SaveOptions();
 extern "C" INT_PTR OpenOptions(WPARAM wParam, LPARAM lParam);
 void InitOptions();
 void DeinitOptions();

@@ -81,6 +81,10 @@ extern "C" {
 		DWORD pol;
 		if(hContact) {
 			pol = DBGetContactSettingDword(hContact, MODULENAME, "Policy", CONTACT_DEFAULT_POLICY); 
+			if (options.bHaveSecureIM && pol != OTRL_POLICY_MANUAL_MOD && pol != OTRL_POLICY_NEVER && db_byte_get(hContact, "SecureIM" , "StatusID", 0)) {
+				db_dword_set(hContact, MODULENAME, "Policy", OTRL_POLICY_MANUAL_MOD);
+				return OTRL_POLICY_MANUAL_MOD;
+			}
 			if(pol != CONTACT_DEFAULT_POLICY) return pol ;
 		}
 		if(context->protocol) {

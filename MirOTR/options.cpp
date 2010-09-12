@@ -99,6 +99,7 @@ void LoadOptions() {
 	options.bHaveMetaContacts = 0!=ServiceExists(MS_MC_GETMETACONTACT);
 	options.bHavePopups = 0!=ServiceExists(MS_POPUP_ADDPOPUPT) && ServiceExists(MS_POPUP_SHOWMESSAGE);
 	options.bHaveSRMMIcons = 0!=ServiceExists(MS_MSG_MODIFYICON);
+	options.bHaveSecureIM = 0!=ServiceExists("SecureIM/IsContactSecured");
 	
 	LoadFilenames();
 }
@@ -110,7 +111,7 @@ extern "C" INT_PTR OpenOptions(WPARAM wParam, LPARAM lParam)
 	odp.cbSize      = sizeof(odp);
 	odp.position    = 100;
 	odp.hInstance   = hInst;
-	odp.ptszGroup   = LPGENT("Plugins");
+	odp.ptszGroup   = LPGENT("Services"); //"Plugins"
 	odp.ptszTitle   = _T(MODULENAME);
 	odp.flags       = ODPF_BOLDGROUPS|ODPF_TCHAR;
 

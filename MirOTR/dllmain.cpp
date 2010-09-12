@@ -105,6 +105,13 @@ int ModulesLoaded(WPARAM wParam, LPARAM lParam) {
 	InitSRMM();
 
 	hEventWindow = HookEvent(ME_MSG_WINDOWEVENT, WindowEvent);
+
+	if (options.bHaveSecureIM && !db_byte_get(0, MODULENAME, "sim_warned", 0)) {
+		db_byte_set(0, MODULENAME, "sim_warned", 1);
+		options.default_policy = OTRL_POLICY_MANUAL_MOD;
+		SaveOptions();
+		MessageBox(0, TranslateT(LANG_OTR_SECUREIM_TITLE), TranslateT(LANG_OTR_SECUREIM_TEXT), 0x30);
+	}
 	
 	// HookEvent(ME_OPT_INITIALISE, OptInit);
 

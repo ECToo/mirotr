@@ -114,3 +114,7 @@
 
 #define LANG_FINGERPRINT_STILL_IN_USE		LPGEN("Fingerprint '%s' still in use in conversation with '%s' (%s). You cannot delete it!")
 #define LANG_FINGERPRINT_NOT_DELETED		LPGEN("Fingerprint '%s' in use in conversation with '%s' (%s). It could not be deleted!")
+
+#define LANG_OTR_SECUREIM_STARTED			LPGEN("Cannot start OTR for '%s'. SecureIM is already running")
+#define LANG_OTR_SECUREIM_TITLE				LPGEN("OTR: SecureIM installed")
+#define LANG_OTR_SECUREIM_TEXT				LPGEN("You are using SecureIM. MirOTR will only work for contacts with SecureIM disabled")

@@ -28,6 +28,13 @@ int SVC_StartOTR(WPARAM wParam, LPARAM lParam) {
 	if(options.bHaveMetaContacts && (hSub = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0) {
 		hContact = hSub;
 	}
+
+	if ( options.bHaveSecureIM && CallService("SecureIM/IsContactSecured", (WPARAM)hContact, 0) != 0 ) {
+		TCHAR msg[512];
+		mir_sntprintf(msg, 512, TranslateT(LANG_OTR_SECUREIM_STARTED), contact_get_nameT(hContact));
+		ShowError(msg);
+		return 0;
+	}
 	
 	TCHAR buff[512];
 	mir_sntprintf(buff, 512, TranslateT(LANG_SESSION_REQUEST_OTR), contact_get_nameT(hContact));
@@ -42,6 +49,13 @@ int SVC_RefreshOTR(WPARAM wParam, LPARAM lParam) {
 	HANDLE hContact = (HANDLE)wParam, hSub;
 	if(options.bHaveMetaContacts && (hSub = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0) {
 		hContact = hSub;
+	}
+
+	if ( options.bHaveSecureIM && CallService("SecureIM/IsContactSecured", (WPARAM)hContact, 0) != 0 ) {
+		TCHAR msg[512];
+		mir_sntprintf(msg, 512, TranslateT(LANG_OTR_SECUREIM_STARTED), contact_get_nameT(hContact));
+		ShowError(msg);
+		return 0;
 	}
 	
 	TCHAR buff[512];
