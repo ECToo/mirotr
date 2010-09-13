@@ -19,6 +19,7 @@ struct PROTOREGENKEYOPTIONS {
 
 void SetFilenames(const char *path) {
 	if (!path || !path[0]) return;
+	CallService(MS_UTILS_CREATEDIRTREE, 0, (LPARAM) path);
 	strcpy(g_fingerprint_store_filename, path);	
 	strcpy(g_private_key_filename, path);	
 	strcat(g_fingerprint_store_filename, ("\\"));		
@@ -35,27 +36,29 @@ int FoldersChanged(WPARAM wParam, LPARAM lParam) {
 	fgd.cbSize = sizeof(FOLDERSGETDATA);
 	fgd.nMaxPathSize = MAX_PATH;
 	fgd.szPath = path;
-	
-	CallService(MS_FOLDERS_GET_PATH, (LPARAM)hPATH_MIROTR, (LPARAM)&fgd);
 
-	SetFilenames(path);
+	if (CallService(MS_FOLDERS_GET_PATH, (LPARAM)hPATH_MIROTR, (LPARAM)&fgd)) {
+		char *mypath = Utils_ReplaceVars(DATA_DIRECTORY);
+		SetFilenames(mypath);
+		mir_free(mypath);
+	} else
+		SetFilenames(path);
+
 	ReadPrivkeyFiles();
 	return 0;
 }
 
 void LoadFilenames() {
-	char *path = Utils_ReplaceVars(DATA_DIRECTORY);
-	CallService(MS_UTILS_CREATEDIRTREE, 0, (LPARAM) path);
-	SetFilenames(path);
-	mir_free(path);
-
 	if(ServiceExists(MS_FOLDERS_REGISTER_PATH)) {
-		FoldersRegisterCustomPath(MODULENAME, "Private Data", DATA_DIRECTORY);
+		hPATH_MIROTR = FoldersRegisterCustomPath(MODULENAME, "Private Data", DATA_DIRECTORY);
 		HookEvent(ME_FOLDERS_PATH_CHANGED, FoldersChanged);
 		
 		// get the path - above are only defaults - there may be a different value in the db
 		FoldersChanged(0, 0);
 	} else {
+		char *path = Utils_ReplaceVars(DATA_DIRECTORY);
+		SetFilenames(path);
+		mir_free(path);
 		ReadPrivkeyFiles();
 	}
 }
