@@ -110,7 +110,7 @@ int ModulesLoaded(WPARAM wParam, LPARAM lParam) {
 		db_byte_set(0, MODULENAME, "sim_warned", 1);
 		options.default_policy = OTRL_POLICY_MANUAL_MOD;
 		SaveOptions();
-		MessageBox(0, TranslateT(LANG_OTR_SECUREIM_TITLE), TranslateT(LANG_OTR_SECUREIM_TEXT), 0x30);
+		MessageBox(0, TranslateT(LANG_OTR_SECUREIM_TEXT), TranslateT(LANG_OTR_SECUREIM_TITLE), 0x30);
 	}
 	
 	// HookEvent(ME_OPT_INITIALISE, OptInit);

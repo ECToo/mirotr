@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D &quot;_CRT_SECURE_NO_WARNINGS&quot; /D &quot;_CRT_NON_CONFORMING_SWPRINTFS&quot;"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\miranda\include&quot;;&quot;$(SolutionDir)\libotr-3.2.0\src&quot;;&quot;$(SolutionDir)\libgcrypt-1.4.6\src&quot;;&quot;$(SolutionDir)\libgpg-error-1.9\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\miranda\include&quot;;&quot;$(SolutionDir)\libotr-3.2.0\src&quot;;&quot;$(SolutionDir)\libgcrypt-1.4.6\src&quot;;&quot;$(SolutionDir)\libgpg-error-1.9\src&quot;;&quot;$(SolutionDir)\ekhtml\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MIROTR_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -65,7 +65,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="libgcrypt.lib libotr.lib Comctl32.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\gpg.vs\bin.vs\libgcrypt\debug\static;..\otr.vs\bin.vs\libotr\debug\static"
+				AdditionalLibraryDirectories="..\gpg.vs\bin.vs\libgcrypt\debug\static;..\otr.vs\bin.vs\libotr\debug\static;&quot;..\ekhtml\vc9\$(PlatformName)\debug&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -122,7 +122,7 @@
 				InlineFunctionExpansion="1"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\miranda\include&quot;;&quot;$(SolutionDir)\libotr-3.2.0\src&quot;;&quot;$(SolutionDir)\libgcrypt-1.4.6\src&quot;;&quot;$(SolutionDir)\libgpg-error-1.9\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\miranda\include&quot;;&quot;$(SolutionDir)\libotr-3.2.0\src&quot;;&quot;$(SolutionDir)\libgcrypt-1.4.6\src&quot;;&quot;$(SolutionDir)\libgpg-error-1.9\src&quot;;&quot;$(SolutionDir)\ekhtml\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MIROTR_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -142,9 +142,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libgcrypt.lib libotr.lib Comctl32.lib"
+				AdditionalDependencies="libgcrypt.lib libotr.lib Comctl32.lib EkHtml.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\gpg.vs\bin.vs\libgcrypt\release\static;..\otr.vs\bin.vs\libotr\release\static"
+				AdditionalLibraryDirectories="..\gpg.vs\bin.vs\libgcrypt\release\static;..\otr.vs\bin.vs\libotr\release\static;&quot;..\ekhtml\vc9\$(PlatformName)\release&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -203,7 +203,7 @@
 				InlineFunctionExpansion="1"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\miranda\include&quot;;&quot;$(SolutionDir)\libotr-3.2.0\src&quot;;&quot;$(SolutionDir)\libgcrypt-1.4.6\src&quot;;&quot;$(SolutionDir)\libgpg-error-1.9\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\miranda\include&quot;;&quot;$(SolutionDir)\libotr-3.2.0\src&quot;;&quot;$(SolutionDir)\libgcrypt-1.4.6\src&quot;;&quot;$(SolutionDir)\libgpg-error-1.9\src&quot;;&quot;$(SolutionDir)\ekhtml\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MIROTR_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -226,7 +226,7 @@
 				AdditionalDependencies="libgcrypt.lib libotr.lib Comctl32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)A.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\gpg.vs\bin.vs\libgcrypt\release\static;..\otr.vs\bin.vs\libotr\release\static"
+				AdditionalLibraryDirectories="..\gpg.vs\bin.vs\libgcrypt\release\static;..\otr.vs\bin.vs\libotr\release\static;&quot;..\ekhtml\vc9\$(PlatformName)\release&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -312,6 +312,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\entities.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\icons.cpp"
 				>
 			</File>
@@ -364,6 +368,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\striphtml.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\svcs_menu.cpp"
 				>
 			</File>
@@ -398,6 +406,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\entities.h"
+				>
+			</File>
+			<File
 				RelativePath=".\icons.h"
 				>
 			</File>
@@ -423,6 +435,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\striphtml.h"
 				>
 			</File>
 			<File

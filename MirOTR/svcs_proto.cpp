@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "svcs_proto.h"
+#include "striphtml.h"
 
 //TODO: Social-Millionaire-Dialoge
 int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
@@ -319,12 +320,21 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 		if (context) {
 			TrustLevel level = otr_context_get_trust(context);
 			if (options.prefix_messages && (level == TRUST_PRIVATE || level == TRUST_UNVERIFIED)) {
+				char* premsg;
+				if (db_byte_get(ccs->hContact, MODULENAME, "HTMLConv", 0)) {
+					premsg = striphtml(newmessage);
+					otrl_message_free(newmessage);
+					newmessage = premsg;
+					is_miralloc = true;
+				}
+
+
 				DWORD len = (strlen(options.prefix)+strlen(newmessage)+1)*sizeof(char);
-				char* premsg = (char*)mir_alloc( len );
+				premsg = (char*)mir_alloc( len );
 				memset(premsg, 0, len);
 				strcpy(premsg, options.prefix);
 				strcat(premsg, newmessage);
-				otrl_message_free(newmessage);
+				(is_miralloc) ? mir_free(newmessage) : otrl_message_free(newmessage);
 				newmessage = premsg;
 				is_miralloc = true;
 			}
