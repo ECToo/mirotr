@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\bin.vs\libotr\debug\static"
-			IntermediateDirectory=".\..\bin.vs\libotr\debug\static\obj"
+			OutputDirectory="$(ProjectDir)..\bin.vs\libotr\$(PlatformName)\debug\static"
+			IntermediateDirectory="$(ProjectDir)..\bin.vs\libotr\$(PlatformName)\debug\static\obj"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -43,14 +43,14 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D &quot;WIN32_LEAN_AND_MEAN&quot; /D &quot;_CRT_SECURE_NO_WARNINGS&quot; /D &quot;_CRT_NON_CONFORMING_SWPRINTFS&quot;"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\custom;..\inc.vs;&quot;..\..\libotr-3.2.0\src&quot;;&quot;..\..\libgcrypt-1.4.6\src&quot;;&quot;..\..\libgpg-error-1.9\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\custom&quot;;&quot;$(ProjectDir)\..\inc.vs&quot;;&quot;$(ProjectDir)\..\..\libotr-3.2.0\src&quot;;&quot;$(ProjectDir)\..\..\libgcrypt-1.4.6\src&quot;;&quot;$(ProjectDir)\..\..\libgpg-error-1.9\src&quot;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_LIB;HAVE_CONFIG_H"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\bin.vs\libotr\debug\static\obj/libotr320.pch"
-				AssemblerListingLocation=".\..\bin.vs\libotr\debug\static\obj/"
-				ObjectFile=".\..\bin.vs\libotr\debug\static\obj/"
-				ProgramDataBaseFileName=".\..\bin.vs\libotr\debug\static\obj/"
+				PrecompiledHeaderFile="$(IntDir)\libotr320.pch"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\bin.vs\libotr\debug\static\libotr.lib"
+				OutputFile="$(OutDir)\libotr.lib"
 				AdditionalLibraryDirectories=""
 				SuppressStartupBanner="true"
 			/>
@@ -83,7 +83,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile="..\bin.vs\libotr\debug\obj\libotr.bsc"
+				OutputFile="$(IntDir)\libotr.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -94,8 +94,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\bin.vs\libotr\release\static"
-			IntermediateDirectory=".\..\bin.vs\libotr\release\static\obj"
+			OutputDirectory="$(ProjectDir)..\bin.vs\libotr\$(PlatformName)\release\static\"
+			IntermediateDirectory="$(ProjectDir)..\bin.vs\libotr\$(PlatformName)\release\static\obj\"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -123,10 +123,10 @@
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\custom&quot;;&quot;$(ProjectDir)\..\inc.vs&quot;;&quot;$(ProjectDir)\..\..\libotr-3.2.0\src&quot;;&quot;$(ProjectDir)\..\..\libgcrypt-1.4.6\src&quot;;&quot;$(ProjectDir)\..\..\libgpg-error-1.9\src&quot;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_LIB;HAVE_CONFIG_H"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\..\bin.vs\libotr\release\static\obj/libotr320.pch"
-				AssemblerListingLocation=".\..\bin.vs\libotr\release\static\obj/"
-				ObjectFile=".\..\bin.vs\libotr\release\static\obj/"
-				ProgramDataBaseFileName=".\..\bin.vs\libotr\release\static\obj/"
+				PrecompiledHeaderFile="$(IntDir)\libotr320.pch"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\bin.vs\libotr\release\static\libotr.lib"
+				OutputFile="$(OutDir)\libotr.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -156,7 +156,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile="..\bin.vs\libotr\release\obj\libotr.bsc"
+				OutputFile="$(IntDir)\libotr.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"

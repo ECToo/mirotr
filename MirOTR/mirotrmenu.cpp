@@ -2,7 +2,7 @@
 #include "m_genmenu.h"
 #include "mirotrmenu.h"
 static HANDLE hMirOTRMenuObject;
-static HGENMENU hStatusInfoItem;
+static HGENMENU hStatusInfoItem, hHTMLConvMenuItem;
 HWND hDummyPaintWin;
 
 //contactmenu exec param(ownerdata)
@@ -56,7 +56,7 @@ static INT_PTR BuildMirOTRMenu(WPARAM wParam, LPARAM)
 
 	ListParam param = { 0 };
 	param.MenuObjectHandle = hMirOTRMenuObject;
-	param.wParam = (WPARAM)otr_context_get_trust(otrl_context_find_miranda(otr_user_state, hContact));
+	param.wParam = (WPARAM)hContact;
 	HMENU hMenu = CreatePopupMenu();
 	CallService(MO_BUILDMENU,(WPARAM)hMenu,(LPARAM)&param);
 
@@ -90,7 +90,8 @@ INT_PTR MirOTRMenuCheckService(WPARAM wParam,LPARAM)
 	if ( cmep == NULL ) //this is root...build it
 		return TRUE;
 
-	TrustLevel level = ( TrustLevel )pcpp->wParam;
+	HANDLE hContact = (HANDLE)pcpp->wParam;
+	TrustLevel level = ( TrustLevel )otr_context_get_trust(otrl_context_find_miranda(otr_user_state, hContact));
 	
 	mi.cbSize = sizeof(mi);
 	if ( CallService(MO_GETMENUITEM, ( WPARAM )pcpp->MenuItemHandle, ( LPARAM )&mi ) == 0 ) {
@@ -121,6 +122,12 @@ INT_PTR MirOTRMenuCheckService(WPARAM wParam,LPARAM)
 					mi.ptszName = TranslateT(LANG_STATUS_DISABLED);
 			}
 			CallService(MO_MODIFYMENUITEM, (WPARAM)hStatusInfoItem, (LPARAM)&mi);
+		} else if (pcpp->MenuItemHandle == hHTMLConvMenuItem) {
+			if (db_byte_get(hContact, MODULENAME, "HTMLConv", 0) )
+				mi.flags |= CMIM_FLAGS|CMIF_CHECKED;
+			else
+				mi.flags = CMIM_FLAGS|(mi.flags &~CMIF_CHECKED);
+			CallService(MO_MODIFYMENUITEM, (WPARAM)hHTMLConvMenuItem, (LPARAM)&mi);
 		}
 	}
 	return TRUE;
@@ -262,6 +269,12 @@ void InitMirOTRMenu(void)
 	mi.pszService = MS_OTR_MENUVERIFY;
 	mi.icolibItem = GetIconHandle(ICON_PRIVATE);
 	AddMirOTRMenuItem(0, (LPARAM) &mi);
+
+	mi.flags = CMIF_TCHAR|CMIF_CHECKED;
+	mi.ptszName = _T(LANG_MENU_TOGGLEHTML);
+	mi.position = 300001;
+	mi.pszService = MS_OTR_MENUTOGGLEHTML;
+	hHTMLConvMenuItem = (HGENMENU) AddMirOTRMenuItem(0, (LPARAM) &mi);
 
 
 	

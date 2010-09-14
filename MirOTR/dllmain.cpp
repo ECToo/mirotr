@@ -112,6 +112,9 @@ int ModulesLoaded(WPARAM wParam, LPARAM lParam) {
 		SaveOptions();
 		MessageBox(0, TranslateT(LANG_OTR_SECUREIM_TEXT), TranslateT(LANG_OTR_SECUREIM_TITLE), 0x30);
 	}
+	if (!options.bHaveSRMMIcons) {
+		MessageBox(0, _T("OTR Info"), _T("Your SRMM plugin does not support status icons. Not all OTR-functions are available!"), 0x30);
+	}
 	
 	// HookEvent(ME_OPT_INITIALISE, OptInit);
 
@@ -179,11 +182,7 @@ DLLFUNC int Load(PLUGINLINK *link)
 	CreateProtoServiceFunction(MODULENAME, PSS_MESSAGE, SVC_OTRSendMessage);
 	CreateProtoServiceFunction(MODULENAME, PSS_MESSAGE"W", SVC_OTRSendMessageW);
 	CreateProtoServiceFunction(MODULENAME, PSR_MESSAGE, SVC_OTRRecvMessage);
-
-	CreateServiceFunction(MS_OTR_MENUSTART, SVC_StartOTR);
-	CreateServiceFunction(MS_OTR_MENUSTOP, SVC_StopOTR);
-	CreateServiceFunction(MS_OTR_MENUREFRESH, SVC_RefreshOTR);
-	CreateServiceFunction(MS_OTR_MENUVERIFY, SVC_VerifyOTR);
+	
 
 	// hook modules loaded for updater support
 	HookEvent(ME_SYSTEM_MODULESLOADED, ModulesLoaded);

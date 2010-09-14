@@ -551,13 +551,18 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 			
 			lvc.iSubItem = 1;
 			lvc.pszText = TranslateT(LANG_PROTO);	
-			lvc.cx = 150;     // width of column in pixels
+			lvc.cx = 100;     // width of column in pixels
 			ListView_InsertColumn(lv, 1, &lvc);
 
 			lvc.iSubItem = 2;
 			lvc.pszText = TranslateT(LANG_POLICY);	
-			lvc.cx = 100;     // width of column in pixels
+			lvc.cx = 90;     // width of column in pixels
 			ListView_InsertColumn(lv, 2, &lvc);
+
+			lvc.iSubItem = 3;
+			lvc.pszText = TranslateT(LANG_HTMLCONV);	
+			lvc.cx = 80;     // width of column in pixels
+			ListView_InsertColumn(lv, 3, &lvc);
 		}
 		SendMessage(hwndDlg, WMU_REFRESHLIST, 0, 0);
 
@@ -595,6 +600,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 					mir_free(proto_t);
 
 					ListView_SetItemText(lv, lvI.iItem, 2, (TCHAR*)policy_to_string((OtrlPolicy)db_dword_get(hContact, MODULENAME, "Policy", CONTACT_DEFAULT_POLICY)) );
+					ListView_SetItemText(lv, lvI.iItem, 3, (db_byte_get(hContact, MODULENAME, "HTMLConv", 0))?TranslateT(LANG_YES):TranslateT(LANG_NO) );
 				}
 
 				
@@ -628,7 +634,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 							ListView_GetItem(GetDlgItem(hwndDlg, IDC_LV_CONT_CONTACTS), &lvi);
 							ContactPolicyMap* cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
 							hContact = (HANDLE)lvi.lParam;
-							(*cpm)[hContact] = policy;
+							(*cpm)[hContact].policy = policy;
 							SendMessage(GetParent(hwndDlg), PSM_CHANGED, 0, 0);
 						}break;
 				}
@@ -637,20 +643,9 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 		break;
 
 	case WM_NOTIFY: 
-		if (((LPNMHDR) lParam)->code == (UINT) LVN_ITEMCHANGED && ((LPNMHDR) lParam)->hwndFrom == GetDlgItem(hwndDlg, IDC_LV_CONT_CONTACTS)
-			&& (((LPNMLISTVIEW)lParam)->uNewState & LVIS_SELECTED )) {
-			int sel = ListView_GetSelectionMark(((LPNMHDR) lParam)->hwndFrom);
-			if (sel == -1) {
-				SendMessage(GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY), CB_SETCURSEL, (LPARAM)-1, 0);
-				EnableWindow(GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY), FALSE);
-			} else {
-				EnableWindow(GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY), TRUE);
-				TCHAR buff[50];
-				ListView_GetItemText(((LPNMHDR)lParam)->hwndFrom, sel, 2, buff, 50);
-				SendMessage(GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY), CB_SELECTSTRING, (LPARAM)-1, (WPARAM)buff);
-			}
-
-		} else if (((LPNMHDR)lParam)->code == (UINT) PSN_APPLY ) {
+		{
+		UINT code = ((LPNMHDR) lParam)->code;
+		if (code == (UINT) PSN_APPLY ) {
 			// handle apply
 
 			ContactPolicyMap *cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
@@ -659,11 +654,50 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 			for(ContactPolicyMap::const_iterator it = cpm->begin(); it != cpm->end(); ++it)
 			{
 				if (!it->first) continue;
-				DBWriteContactSettingDword(it->first, MODULENAME, "Policy", (DWORD)it->second);
+				if (it->second.policy) DBWriteContactSettingDword(it->first, MODULENAME, "Policy", (DWORD)it->second.policy);
+				if (it->second.htmlconv) db_byte_set(it->first, MODULENAME, "HTMLConv", it->second.htmlconv-1);
 			}
 			return TRUE;
+		} else if (((LPNMHDR) lParam)->hwndFrom == GetDlgItem(hwndDlg, IDC_LV_CONT_CONTACTS)) {
+			if (code == (UINT) LVN_ITEMCHANGED && (((LPNMLISTVIEW)lParam)->uNewState & LVIS_SELECTED )) {
+				int sel = ListView_GetSelectionMark(((LPNMHDR) lParam)->hwndFrom);
+				if (sel == -1) {
+					SendMessage(GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY), CB_SETCURSEL, (LPARAM)-1, 0);
+					EnableWindow(GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY), FALSE);
+				} else {
+					EnableWindow(GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY), TRUE);
+					TCHAR buff[50];
+					ListView_GetItemText(((LPNMHDR)lParam)->hwndFrom, sel, 2, buff, 50);
+					SendMessage(GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY), CB_SELECTSTRING, (LPARAM)-1, (WPARAM)buff);
+				}
+			} else if (code == (UINT) NM_CLICK) {
+				if (((LPNMLISTVIEW)lParam)->iSubItem == 3) {
+					LVITEM lvi;
+					lvi.mask = LVIF_PARAM;
+					lvi.iItem = ((LPNMLISTVIEW)lParam)->iItem;
+					if (lvi.iItem < 0) return FALSE;
+					lvi.iSubItem = 0;
+					SendDlgItemMessage(hwndDlg, IDC_LV_CONT_CONTACTS, LVM_GETITEM, 0, (LPARAM)&lvi);
+
+					HANDLE hContact = (HANDLE)lvi.lParam;
+					ContactPolicyMap *cp = (ContactPolicyMap *)GetWindowLong(hwndDlg, GWL_USERDATA);
+					TCHAR buff[50];
+					ListView_GetItemText(((LPNMHDR)lParam)->hwndFrom, lvi.iItem, 3, buff, 50);
+					if (_tcsncmp(buff, TranslateT(LANG_YES), 50)==0){
+						(*cp)[hContact].htmlconv = HTMLCONV_DISABLE;
+						ListView_SetItemText(((LPNMHDR)lParam)->hwndFrom, lvi.iItem, 3, TranslateT(LANG_NO));
+					}else {
+						(*cp)[hContact].htmlconv = HTMLCONV_ENABLE;
+						ListView_SetItemText(((LPNMHDR)lParam)->hwndFrom, lvi.iItem, 3, TranslateT(LANG_YES));
+					}
+					(*cp)[hContact].htmlconv += 1;
+					SendMessage(GetParent(hwndDlg), PSM_CHANGED, 0, 0);
+				}
+					
+						
+			}
 		}
-		break;
+		}break;
 	case WM_DESTROY:
 		ContactPolicyMap *cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
 		cpm->clear();

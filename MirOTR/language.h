@@ -18,6 +18,7 @@
 #define LANG_MENU_REFRESH					LPGEN("&Refresh OTR session")
 #define LANG_MENU_STOP						LPGEN("Sto&p OTR session")
 #define LANG_MENU_VERIFY					LPGEN("&Verify Fingerprint")
+#define LANG_MENU_TOGGLEHTML				LPGEN("&Convert HTML (for Pidgin)")
 
 #define LANG_SESSION_TERMINATED_OTR			LPGEN("OTR encrypted session with '%s' has been terminated")
 #define LANG_SESSION_REQUEST_OTR			LPGEN("Requesting OTR encrypted session with '%s'")
@@ -69,6 +70,7 @@
 #define LANG_VERIFIED						LPGEN("Verified")
 #define LANG_ACTIVE							LPGEN("Active")
 #define LANG_FINGERPRINT					LPGEN("Fingerprint")
+#define LANG_HTMLCONV						LPGEN("Conv. HTML")
 
 #define LANG_POLICY_DEFAULT					LPGEN("Default")
 #define LANG_POLICY_ALWAYS					LPGEN("Always")

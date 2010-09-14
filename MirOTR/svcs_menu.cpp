@@ -109,7 +109,23 @@ int SVC_VerifyOTR(WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
+int SVC_ToggleHTMLOTR(WPARAM wParam, LPARAM lParam) {
+	HANDLE hContact = (HANDLE)wParam;
+	if (db_byte_get(hContact, MODULENAME, "HTMLConv", 0))
+		db_byte_set(hContact, MODULENAME, "HTMLConv", 0);
+	else
+		db_byte_set(hContact, MODULENAME, "HTMLConv", 1);
+
+	return 0;
+}
+
 void InitMenu() {
+	CreateServiceFunction(MS_OTR_MENUSTART, SVC_StartOTR);
+	CreateServiceFunction(MS_OTR_MENUSTOP, SVC_StopOTR);
+	CreateServiceFunction(MS_OTR_MENUREFRESH, SVC_RefreshOTR);
+	CreateServiceFunction(MS_OTR_MENUVERIFY, SVC_VerifyOTR);
+	CreateServiceFunction(MS_OTR_MENUTOGGLEHTML, SVC_ToggleHTMLOTR);
+
 	CLISTMENUITEM mi = {0};
 	mi.cbSize = sizeof(mi);
 	mi.flags = CMIF_NOTOFFLINE | CMIF_TCHAR | CMIF_ICONFROMICOLIB;

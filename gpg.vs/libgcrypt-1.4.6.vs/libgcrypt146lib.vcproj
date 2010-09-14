@@ -4,6 +4,7 @@
 	Version="9,00"
 	Name="libgcrypt146lib"
 	ProjectGUID="{40FE7861-E54E-4DA9-BE4D-A5178014E477}"
+	RootNamespace="libgcrypt146lib"
 	TargetFrameworkVersion="0"
 	>
 	<Platforms>
@@ -16,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\bin.vs\libgcrypt\release\static"
-			IntermediateDirectory=".\..\bin.vs\libgcrypt\release\static\obj"
+			OutputDirectory="$(ProjectDir)..\bin.vs\libgcrypt\$(PlatformName)\release\static\"
+			IntermediateDirectory="$(ProjectDir)..\bin.vs\libgcrypt\$(PlatformName)\release\static\obj\"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -43,13 +44,13 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D &quot;_CRT_SECURE_NO_WARNINGS&quot;"
 				Optimization="3"
-				AdditionalIncludeDirectories=".\custom,..\inc.vs,..\..\libgcrypt-1.4.6\cipher,..\..\libgcrypt-1.4.6\mpi,..\..\libgcrypt-1.4.6\mpi\generic,..\..\libgcrypt-1.4.6\src,..\..\libgpg-error-1.9\src"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)custom&quot;;&quot;$(ProjectDir)..\inc.vs&quot;;&quot;$(SolutionDir)libgcrypt-1.4.6\cipher&quot;;&quot;$(SolutionDir)libgcrypt-1.4.6\mpi&quot;;&quot;$(SolutionDir)libgcrypt-1.4.6\mpi\generic&quot;;&quot;$(SolutionDir)libgcrypt-1.4.6\src&quot;;&quot;$(SolutionDir)libgpg-error-1.9\src&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_CONFIG_H"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\..\bin.vs\libgcrypt\release\static\obj/libgcrypt146lib.pch"
-				AssemblerListingLocation=".\..\bin.vs\libgcrypt\release\static\obj/"
-				ObjectFile=".\..\bin.vs\libgcrypt\release\static\obj/"
-				ProgramDataBaseFileName=".\..\bin.vs\libgcrypt\release\static\obj/"
+				PrecompiledHeaderFile="$(IntDir)\libgcrypt146lib.pch"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -67,7 +68,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\bin.vs\libgcrypt\release\static\libgcrypt.lib"
+				OutputFile="$(OutDir)\libgcrypt.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -79,7 +80,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\..\bin.vs\libgcrypt\release\static/libgcrypt146lib.bsc"
+				OutputFile="$(IntDir)\libgcrypt146lib.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -90,8 +91,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\bin.vs\libgcrypt\debug\static"
-			IntermediateDirectory=".\..\bin.vs\libgcrypt\debug\static\obj"
+			OutputDirectory="$(ProjectDir)..\bin.vs\libgcrypt\$(PlatformName)\debug\static\"
+			IntermediateDirectory="$(ProjectDir)..\bin.vs\libgcrypt\$(PlatformName)\debug\static\obj\"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -116,14 +117,14 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D &quot;_CRT_SECURE_NO_WARNINGS&quot;"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\custom;..\inc.vs;&quot;..\..\libgcrypt-1.4.6\random&quot;;&quot;..\..\libgcrypt-1.4.6\cipher&quot;;&quot;..\..\libgcrypt-1.4.6\mpi&quot;;&quot;..\..\libgcrypt-1.4.6\mpi\generic&quot;;&quot;..\..\libgcrypt-1.4.6\src&quot;;&quot;..\..\libgpg-error-1.9\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)custom&quot;;&quot;$(ProjectDir)..\inc.vs&quot;;&quot;$(SolutionDir)libgcrypt-1.4.6\cipher&quot;;&quot;$(SolutionDir)libgcrypt-1.4.6\mpi&quot;;&quot;$(SolutionDir)libgcrypt-1.4.6\mpi\generic&quot;;&quot;$(SolutionDir)libgcrypt-1.4.6\src&quot;;&quot;$(SolutionDir)libgpg-error-1.9\src&quot;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_LIB;HAVE_CONFIG_H"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\bin.vs\libgcrypt\debug\static\obj/libgcrypt146lib.pch"
-				AssemblerListingLocation=".\..\bin.vs\libgcrypt\debug\static\obj/"
-				ObjectFile=".\..\bin.vs\libgcrypt\debug\static\obj/"
-				ProgramDataBaseFileName=".\..\bin.vs\libgcrypt\debug\static\obj/"
+				PrecompiledHeaderFile="$(IntDir)\libgcrypt146lib.pch"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -141,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\bin.vs\libgcrypt\debug\static\libgcrypt.lib"
+				OutputFile="$(OutDir)libgcrypt.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -153,7 +154,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\..\bin.vs\libgcrypt\debug\static/libgcrypt146lib.bsc"
+				OutputFile="$(IntDir)\libgcrypt146lib.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
