@@ -30,7 +30,7 @@ my $rootdir = '';
 my %hash = ();
 my $clines = 0;
 
-my $version = '0.8';
+my $version = '0.10.2.3';
 my $time = localtime();
 
 if (@ARGV && $ARGV[0] eq "version") {

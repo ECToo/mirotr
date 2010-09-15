@@ -393,3 +393,35 @@ size_t decode_html_entities_utf8(char *dest, const char *src, size_t len)
 	*to = 0;
 	return (size_t)(to - dest);
 }
+
+char * encode_html_entities_utf8(const char *src) {
+	const char *pos, *start=src;
+	std::string buf;
+	if (! (pos = strpbrk(start, "&<>\"\r")) ) return NULL;
+	while (pos) {
+		buf.append(start, pos-start);
+		start = pos+1;
+		switch (*pos) {
+			case '"':
+				buf.append("&quot;");
+				break;
+			case '<':
+				buf.append("&lt;");
+				break;
+			case '>':
+				buf.append("&gt;");
+				break;
+			case '&':
+				buf.append("&amp;");
+				break;
+			case '\r':
+				buf.append("<br>\r");
+				break;
+		}
+		pos = strpbrk(start, "&<>\"\r");
+	}
+	if (strlen(start)) buf.append(start);
+	pos = mir_strdup(buf.c_str());
+	buf.clear();
+	return (char*)pos;
+}

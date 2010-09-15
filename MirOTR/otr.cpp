@@ -319,11 +319,16 @@ extern "C" {
 	}
 
 	int max_message_size(void *opdata, ConnContext *context) {
+		const char *proto;
+		if (context && context->protocol)
+			proto = context->protocol;
+		else 
+			proto = contact_get_proto(opdata);
 		// ugly wokaround for ICQ. ICQ protocol reports more than 7k, but in SMP this is too long.
 		// possibly ICQ doesn't allow single words without spaces to become longer than ~2340?
-		if (strcmp("ICQ", context->protocol)==0 || strncmp("ICQ_", context->protocol, 4)==0)
+		if (strcmp("ICQ", proto)==0 || strncmp("ICQ_", proto, 4)==0)
 			return 2340;
-		return CallProtoService(context->protocol, PS_GETCAPS, PFLAG_MAXLENOFMESSAGE, (LPARAM)context->app_data);
+		return CallProtoService(proto, PS_GETCAPS, PFLAG_MAXLENOFMESSAGE, (LPARAM)opdata);
 	}
 
 	const char *account_name(void *opdata, const char *account, const char *protocol) {

@@ -19,4 +19,6 @@ extern size_t decode_html_entities_utf8(char *dest, const char *src, size_t len)
 	the function returns the length of the decoded string
 */
 
+extern char * encode_html_entities_utf8(const char *src);
+
 #endif

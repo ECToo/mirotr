@@ -4,11 +4,11 @@
 /* VERSION DEFINITIONS */
 #define VER_MAJOR				0
 #define VER_MINOR				10
-#define VER_RELEASE				1
-#define VER_BUILD				2
+#define VER_RELEASE				2
+#define VER_BUILD				3
 
 #define __STRINGIZE(x)			#x
-#define VER_STRING				"0.10.1.2"
+#define VER_STRING				"0.10.2.3"
 
 #ifdef _UNICODE
 	#define SHORT_NAME_STRING 		"Miranda OTR"

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "svcs_proto.h"
 #include "striphtml.h"
+#include "entities.h"
 
 //TODO: Social-Millionaire-Dialoge
 int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
@@ -44,11 +45,21 @@ int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 		return CallService(MS_PROTO_CHAINSEND, wParam, lParam);
 	}
 
+	char *tmpencode = NULL;
+	ConnContext *context = otrl_context_find_miranda(otr_user_state, (void*)ccs->hContact);
+	if (db_byte_get(ccs->hContact, MODULENAME, "HTMLConv", 0) && otr_context_get_trust(context) >= TRUST_UNVERIFIED) {
+		char *tmpencode = encode_html_entities_utf8(oldmessage_utf);
+		if (tmpencode != NULL) {
+			if (!(ccs->wParam & PREF_UTF)) mir_free(oldmessage_utf);
+			oldmessage_utf = tmpencode;
+		}
+	}
+
 	char *username = contact_get_id(ccs->hContact);
     err = otrl_message_sending(otr_user_state, &ops, (void*)ccs->hContact,
 	    proto, proto, username, oldmessage_utf, NULL, &newmessage,
 	    add_appdata, (void*)ccs->hContact);
-	if (!(ccs->wParam & PREF_UTF)) mir_free(oldmessage_utf);
+	if (tmpencode!= NULL || !(ccs->wParam & PREF_UTF)) mir_free(oldmessage_utf);
 	oldmessage_utf = NULL;
 	mir_free(username);
 
@@ -67,8 +78,6 @@ int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
     } else if (newmessage) {
 	/* Fragment the message if necessary, and send all but the last
 	 * fragment over the network.  We will send the last segment later */
-		ConnContext *context = otrl_context_find_miranda(otr_user_state,
-			(void*)ccs->hContact);
 
 		// oldmessage_utf is not used anymore, so use it as buffer
 		err = otrl_message_fragment_and_send(&ops, (void*)ccs->hContact, context,
@@ -319,7 +328,7 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 		bool is_miralloc = false;
 		if (context) {
 			TrustLevel level = otr_context_get_trust(context);
-			if (options.prefix_messages && (level == TRUST_PRIVATE || level == TRUST_UNVERIFIED)) {
+			if (level >= TRUST_UNVERIFIED) {
 				char* premsg;
 				if (db_byte_get(ccs->hContact, MODULENAME, "HTMLConv", 0)) {
 					premsg = striphtml(newmessage);
@@ -328,15 +337,16 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 					is_miralloc = true;
 				}
 
-
-				DWORD len = (strlen(options.prefix)+strlen(newmessage)+1)*sizeof(char);
-				premsg = (char*)mir_alloc( len );
-				memset(premsg, 0, len);
-				strcpy(premsg, options.prefix);
-				strcat(premsg, newmessage);
-				(is_miralloc) ? mir_free(newmessage) : otrl_message_free(newmessage);
-				newmessage = premsg;
-				is_miralloc = true;
+				if (options.prefix_messages) {
+					DWORD len = (strlen(options.prefix)+strlen(newmessage)+1)*sizeof(char);
+					premsg = (char*)mir_alloc( len );
+					memset(premsg, 0, len);
+					strcpy(premsg, options.prefix);
+					strcat(premsg, newmessage);
+					(is_miralloc) ? mir_free(newmessage) : otrl_message_free(newmessage);
+					newmessage = premsg;
+					is_miralloc = true;
+				}
 			}
 		}
 		pre->szMessage = newmessage;
