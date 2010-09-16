@@ -35,14 +35,14 @@ void starttag_cb (void *cbdata, ekhtml_string_t *tag, ekhtml_attr_t *attrs) {
 		case 3:
 			if (_strnicmp(tag->str, "img", 3) == 0) {
 				ekhtml_attr_t *attr = attrs;
-				data->buffer.append("IMAGE:( ");
+				data->buffer.append("IMAGE [ ");
 					while (attr) {
 						if (_strnicmp(attr->name.str, "src", attr->name.len)==0) {
 							data->buffer.append(attr->val.str, attr->val.len);
 							break;
 						}
 					}
-				data->buffer.append(" )");
+				data->buffer.append(" ] ");
 			}
 			break;
 	}
@@ -55,11 +55,12 @@ void endtag_cb (void *cbdata, ekhtml_string_t *tag) {
 			switch (*(tag->str)) {
 				case 'a':
 				case 'A':
-					data->buffer.append(":( ");
+					if (data->stack.empty()) break;
+					data->buffer.append(" [ ");
 					data->buffer.append(data->stack.top());
 					mir_free(data->stack.top());
 					data->stack.pop();
-					data->buffer.append(" ) ");
+					data->buffer.append(" ] ");
 					break;
 				case 'i':
 				case 'I':
@@ -78,6 +79,16 @@ void data_cb (void *cbdata, ekhtml_string_t *text) {
 	STRIPHTML_DATA *data = (STRIPHTML_DATA *)cbdata;
 	char* s = (char*) mir_calloc(text->len+1);
 	decode_html_entities_utf8(s, text->str, text->len);
+
+	if (!data->stack.empty()) {
+		char *top = data->stack.top();
+		if (_stricmp(s, top)==0) {
+			mir_free(top);
+			data->stack.pop();
+		}
+	}
+	
+
 	data->buffer.append(s);
 	mir_free(s);
 }
