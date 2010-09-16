@@ -324,9 +324,9 @@ static size_t putc_utf8(unsigned long cp, char *buffer)
 }
 
 static _Bool parse_entity(const char *current, char **to,
-	const char **from, size_t len)
+	const char **from, size_t maxlen)
 {
-	const char *end = (const char *)memchr(current, ';', len);
+	const char *end = (const char *)memchr(current, ';', maxlen);
 	if(!end) return 0;
 
 	if(current[1] == '#')
@@ -373,24 +373,27 @@ size_t decode_html_entities_utf8(char *dest, const char *src, size_t len)
 	const char *from = src;
 
 	const char *current;
-	while((current = (const char*)memchr(from, '&', len)))
+	if (!len) len = strlen(src);
+	size_t remain = len;
+	while((current = (const char*)memchr(from, '&', len-(from-src))))
 	{
 		memcpy(to, from, (size_t)(current - from));
 		to += current - from;
+		//remain = len-(current-src);
 
-		if(parse_entity(current, &to, &from, len))
+		if(parse_entity(current, &to, &from, len-(current-src)))
 			continue;
 
 		from = current;
 		*to++ = *from++;
 	}
 
-	size_t remaining = strnlen(from, len);
+	remain = strnlen(from, len-(from-src));
 
-	memcpy(to, from, remaining);
-	to += remaining;
+	memcpy(to, from, remain);
+	to += remain;
 
-	*to = 0;
+	if (src!=dest || (size_t)(to-dest) < len ) *to = 0;
 	return (size_t)(to - dest);
 }
 
