@@ -41,6 +41,7 @@
 #include <m_contacts.h> 
 #include <m_utils.h>
 #include <m_icolib.h>
+#include <m_msg_buttonsbar.h>
 
 #include <gcrypt.h>
 extern "C" {

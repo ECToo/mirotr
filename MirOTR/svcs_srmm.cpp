@@ -2,6 +2,7 @@
 #include "mirotrmenu.h"
 HANDLE hEventIconPressed;
 HICON hIconNotSecure, hIconFinished, hIconPrivate, hIconUnverified;
+BBButton OTRButton;
 
 int WindowEvent(WPARAM wParam, LPARAM lParam) {
 	MessageWindowEventData *mwd = (MessageWindowEventData *)lParam;
@@ -147,8 +148,9 @@ void SetEncryptionStatus(HANDLE hContact, TrustLevel level) {
 
 	// if(!chat_room) DBWriteContactSettingByte(hContact, MODULENAME, "Encrypted", (encrypted ? 1 : 0));
 
-	if(options.bHaveSRMMIcons) {
+	if(options.bHaveSRMMIcons || options.bHaveButtonsBar) {
 		//strcat(dbg_msg, "\nchanging icon");
+		BBButton button = OTRButton;
 		StatusIconData sid = {0}, sid2={0};
 		sid.cbSize = sizeof(sid);
 		sid.szModule = MODULENAME;
@@ -163,20 +165,33 @@ void SetEncryptionStatus(HANDLE hContact, TrustLevel level) {
 			switch (level) {
 				case TRUST_FINISHED:
 					sid.flags = 0;
+					button.ptszTooltip = TranslateT(LANG_STATUS_FINISHED);
+					button.hIcon = GetIconHandle(ICON_FINISHED);
 					break;
 				case TRUST_UNVERIFIED:
 					sid2.flags = MBF_DISABLED;
+					button.ptszTooltip = TranslateT(LANG_STATUS_UNVERIFIED);
+					button.hIcon = GetIconHandle(ICON_UNVERIFIED);
 					break;
 				case TRUST_PRIVATE:
 					sid2.flags = 0;
+					button.ptszTooltip = TranslateT(LANG_STATUS_PRIVATE);
+					button.hIcon = GetIconHandle(ICON_PRIVATE);
 					break;
 				default:
 					sid.flags = MBF_DISABLED;
+					button.ptszTooltip = TranslateT(LANG_STATUS_DISABLED);
+					button.hIcon = GetIconHandle(ICON_NOT_PRIVATE);
 					break;
 			}
+		} else {
+			button.bbbFlags |= BBBF_HIDDEN;
 		}
-		CallService(MS_MSG_MODIFYICON, (WPARAM)hContact, (LPARAM)&sid);
-		CallService(MS_MSG_MODIFYICON, (WPARAM)hContact, (LPARAM)&sid2);
+		if (options.bHaveSRMMIcons) {
+			CallService(MS_MSG_MODIFYICON, (WPARAM)hContact, (LPARAM)&sid);
+			CallService(MS_MSG_MODIFYICON, (WPARAM)hContact, (LPARAM)&sid2);
+		}
+		if (options.bHaveButtonsBar) CallService(MS_BB_SETBUTTONSTATE, (WPARAM)hContact, (LPARAM)&button);
 		db_dword_set(hContact, MODULENAME, "TrustLevel", level);
 
 		if(!chat_room && options.bHaveMetaContacts) {
@@ -190,8 +205,27 @@ void SetEncryptionStatus(HANDLE hContact, TrustLevel level) {
 	//PUShowMessage(dbg_msg, SM_NOTIFY);
 }
 
+int SVC_ButtonsBarLoaded(WPARAM, LPARAM) {
+	CallService(MS_BB_ADDBUTTON, 0, (LPARAM)&OTRButton);
+	return 0;
+}
+int SVC_ButtonsBarPressed(WPARAM w, LPARAM l) {
+	CustomButtonClickData* cbcd = (CustomButtonClickData *)l;
+	if (cbcd->cbSize == (int)sizeof(CustomButtonClickData) && cbcd->dwButtonId == 0 && strcmp(cbcd->pszModule, MODULENAME)==0) {
+		HANDLE hContact = (HANDLE)w;
+	
+		char *proto = (char *)CallService(MS_PROTO_GETCONTACTBASEPROTO, (WPARAM)hContact, 0);
+		if(proto && DBGetContactSettingByte(hContact, proto, "ChatRoom", 0))
+			return 0;
+		ShowOTRMenu(hContact, cbcd->pt);
+
+	}
+	return 0;
+}
+
 void InitSRMM() {
 	// add icon to srmm status icons
+	InitMirOTRMenu();
 	if(options.bHaveSRMMIcons) {
 		hIconNotSecure = LoadIcon(ICON_NOT_PRIVATE, 0);
 		hIconFinished = LoadIcon(ICON_FINISHED, 0);
@@ -216,7 +250,22 @@ void InitSRMM() {
 		// hook the window events so that we can can change the status of the icon
 		
 		hEventIconPressed = HookEvent(ME_MSG_ICONPRESSED, SVC_IconPressed);
-		InitMirOTRMenu();
+	}
+	if (options.bHaveButtonsBar) {
+		ZeroMemory(&OTRButton, sizeof(OTRButton));
+		OTRButton.cbSize = sizeof(OTRButton);
+		OTRButton.dwButtonID = 0;
+		OTRButton.pszModuleName = MODULENAME;
+		OTRButton.dwDefPos = 200;
+#ifdef _UNICODE
+		OTRButton.bbbFlags = BBBF_ISRSIDEBUTTON|BBBF_CANBEHIDDEN|BBBF_ISIMBUTTON|BBBF_ISPUSHBUTTON;
+#else
+		OTRButton.bbbFlags = BBBF_ISRSIDEBUTTON|BBBF_CANBEHIDDEN|BBBF_ISIMBUTTON|BBBF_ISPUSHBUTTON|BBBF_ANSITOOLTIP;
+#endif
+		OTRButton.ptszTooltip = TranslateT(LANG_OTR_TOOLTIP);
+		OTRButton.hIcon = GetIconHandle(ICON_NOT_PRIVATE);
+		HookEvent(ME_MSG_TOOLBARLOADED, SVC_ButtonsBarLoaded);
+		HookEvent(ME_MSG_BUTTONPRESSED, SVC_ButtonsBarPressed);
 	}
 }
 void DeinitSRMM() {
@@ -227,6 +276,6 @@ void DeinitSRMM() {
 		ReleaseIcon(ICON_PRIVATE, 0);
 		ReleaseIcon(ICON_UNVERIFIED, 0);
 		hIconNotSecure = hIconFinished = hIconPrivate = hIconUnverified =0;
-		UninitMirOTRMenu();
 	}
+	UninitMirOTRMenu();
 }
