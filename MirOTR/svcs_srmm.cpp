@@ -184,8 +184,9 @@ void SetEncryptionStatus(HANDLE hContact, TrustLevel level) {
 					button.hIcon = GetIconHandle(ICON_NOT_PRIVATE);
 					break;
 			}
+			button.bbbFlags = 0;
 		} else {
-			button.bbbFlags |= BBBF_HIDDEN;
+			button.bbbFlags = BBSF_HIDDEN;
 		}
 		if (options.bHaveSRMMIcons) {
 			CallService(MS_MSG_MODIFYICON, (WPARAM)hContact, (LPARAM)&sid);
@@ -258,9 +259,9 @@ void InitSRMM() {
 		OTRButton.pszModuleName = MODULENAME;
 		OTRButton.dwDefPos = 200;
 #ifdef _UNICODE
-		OTRButton.bbbFlags = BBBF_ISRSIDEBUTTON|BBBF_CANBEHIDDEN|BBBF_ISIMBUTTON|BBBF_ISPUSHBUTTON;
+		OTRButton.bbbFlags = BBBF_ISRSIDEBUTTON|BBBF_CANBEHIDDEN|BBBF_ISIMBUTTON;
 #else
-		OTRButton.bbbFlags = BBBF_ISRSIDEBUTTON|BBBF_CANBEHIDDEN|BBBF_ISIMBUTTON|BBBF_ISPUSHBUTTON|BBBF_ANSITOOLTIP;
+		OTRButton.bbbFlags = BBBF_ISRSIDEBUTTON|BBBF_CANBEHIDDEN|BBBF_ISIMBUTTON|BBBF_ANSITOOLTIP;
 #endif
 		OTRButton.ptszTooltip = TranslateT(LANG_OTR_TOOLTIP);
 		OTRButton.hIcon = GetIconHandle(ICON_NOT_PRIVATE);
