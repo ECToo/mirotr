@@ -61,7 +61,7 @@ int OptInit(WPARAM wParam, LPARAM lParam);
 
 void LoadOptions();
 void SaveOptions();
-extern "C" INT_PTR OpenOptions(WPARAM wParam, LPARAM lParam);
+extern "C" int OpenOptions(WPARAM wParam, LPARAM lParam);
 void InitOptions();
 void DeinitOptions();
 

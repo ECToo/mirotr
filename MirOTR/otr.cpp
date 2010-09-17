@@ -52,7 +52,7 @@ INT_PTR CALLBACK GenKeyDlgFunc(HWND hWndDlg, UINT msg, WPARAM wParam, LPARAM lPa
 					return 0;
 				}
 				TranslateDialogDefault(hWndDlg);
-				SetClassLongPtr(hWndDlg, GCL_HICON, (LONG_PTR)LoadIcon(ICON_OTR,1) );
+				SetClassLongPtr(hWndDlg, GCLP_HICON, (LONG_PTR)LoadIcon(ICON_OTR,1) );
 				TCHAR buff[256];
 				TCHAR *proto = mir_a2t((char*)lParam);
 				mir_sntprintf(buff, 256, TranslateT(LANG_GENERATE_KEY), proto);
@@ -67,7 +67,7 @@ INT_PTR CALLBACK GenKeyDlgFunc(HWND hWndDlg, UINT msg, WPARAM wParam, LPARAM lPa
 			EndDialog(hWndDlg, 0);
 			return TRUE;
 		case WM_DESTROY:
-			SetClassLongPtr(hWndDlg, GCL_HICON, 0);
+			SetClassLongPtr(hWndDlg, GCLP_HICON, 0);
 			ReleaseIcon(ICON_OTR,1);
 	}
 	return FALSE;
@@ -346,54 +346,54 @@ extern "C" {
 // Forward decl
 gcry_error_t otrl_privkey_write_FILEp(OtrlUserState us, FILE *privf);
 /* Generate a private DSA key for a given account, storing it into a
- * file on disk, and loading it into the given OtrlUserState.  Overwrite any
- * previously generated keys for that account in that OtrlUserState. */
-gcry_error_t otrl_privkey_write(OtrlUserState us, const char *filename)
-{
-    gcry_error_t err;
-    FILE *privf;
-#ifndef WIN32
-    mode_t oldmask;
-#endif
+* file on disk, and loading it into the given OtrlUserState.  Overwrite any
+* previously generated keys for that account in that OtrlUserState. */
+ gcry_error_t otrl_privkey_write(OtrlUserState us, const char *filename)
+ {
+	 gcry_error_t err;
+	 FILE *privf;
+	 #ifndef WIN32
+		 mode_t oldmask;
+	 #endif
+		 
+		 #ifndef WIN32
+		 oldmask = umask(077);
+	 #endif
+		 privf = fopen(filename, "w+b");
+	 if (!privf) {
+		 #ifndef WIN32
+			 umask(oldmask);
+		 #endif
+			 err = gcry_error_from_errno(errno);
+		 return err;
+		 }
 
-#ifndef WIN32
-    oldmask = umask(077);
-#endif
-    privf = fopen(filename, "w+b");
-    if (!privf) {
-#ifndef WIN32
-	umask(oldmask);
-#endif
-	err = gcry_error_from_errno(errno);
-	return err;
-    }
+		 err = otrl_privkey_write_FILEp(us, privf);
 
-    err = otrl_privkey_write_FILEp(us, privf);
-
-    fclose(privf);
-#ifndef WIN32
-    umask(oldmask);
-#endif
-    return err;
-}
+		 fclose(privf);
+	 #ifndef WIN32
+		 umask(oldmask);
+	 #endif
+		 return err;
+	 }
 
 /* Just store the private keys of an OtrlUserState.
  * The FILE* must be open for reading and writing. */
-gcry_error_t otrl_privkey_write_FILEp(OtrlUserState us, FILE *privf)
-{
-    OtrlPrivKey *p;
-
-    if (!privf) return gcry_error(GPG_ERR_NO_ERROR);
-
-    
-
-    /* Output the other keys we know */
-    fprintf(privf, "(privkeys\n");
-    for (p=us->privkey_root; p; p=p->next) {
-		otrl_account_write(privf, p->accountname, p->protocol, p->privkey);
-    }
-    if ( fprintf(privf, ")\n") < 0 )
-		return gcry_error_from_errno(errno);
-	return gcry_error(GPG_ERR_NO_ERROR);
-
+	 gcry_error_t otrl_privkey_write_FILEp(OtrlUserState us, FILE *privf)
+	 {
+		 OtrlPrivKey *p;
+		 
+			 if (!privf) return gcry_error(GPG_ERR_NO_ERROR);
+		 
+			     
+			 
+			 /* Output the other keys we know */
+			 fprintf(privf, "(privkeys\n");
+		 for (p=us->privkey_root; p; p=p->next) {
+			 otrl_account_write(privf, p->accountname, p->protocol, p->privkey);
+			 }
+		 if ( fprintf(privf, ")\n") < 0 )
+			 return gcry_error_from_errno(errno);
+		 return gcry_error(GPG_ERR_NO_ERROR);
+		 
 }

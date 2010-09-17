@@ -1,8 +1,8 @@
 #pragma once
 
-int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam);
-int SVC_OTRSendMessageW(WPARAM wParam, LPARAM lParam);
-int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam);
+INT_PTR SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam);
+INT_PTR SVC_OTRSendMessageW(WPARAM wParam, LPARAM lParam);
+INT_PTR SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam);
 
 void otr_abort_smp(ConnContext *context);
 

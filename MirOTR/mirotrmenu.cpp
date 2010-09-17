@@ -172,7 +172,7 @@ LRESULT CALLBACK PopupMenuWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 		if (CallService(MS_CLIST_MENUDRAWITEM, wParam, lParam)) return TRUE;
 		break;
 	case WM_COMMAND:
-		if (CallService(MO_PROCESSCOMMANDBYMENUIDENT, wParam, GetWindowLongPtr(hwnd, GWL_USERDATA))) return TRUE;
+		if (CallService(MO_PROCESSCOMMANDBYMENUIDENT, wParam, GetWindowLongPtr(hwnd, GWLP_USERDATA))) return TRUE;
 		break;
   }
   return DefWindowProc(hwnd, message, wParam, lParam);
@@ -180,7 +180,7 @@ LRESULT CALLBACK PopupMenuWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
 void ShowOTRMenu(HANDLE hContact, POINT pt){
 	HMENU menu = (HMENU) CallService(MS_MIROTR_MENUBUILDMIROTR, (WPARAM)hContact, 0);
-	SetWindowLongPtr(hDummyPaintWin, GWL_USERDATA, (LONG_PTR)hContact);
+	SetWindowLongPtr(hDummyPaintWin, GWLP_USERDATA, (LONG_PTR)hContact);
 	TrackPopupMenu(menu, 0, pt.x, pt.y, 0, hDummyPaintWin, 0);
 	DestroyMenu(menu);
 }

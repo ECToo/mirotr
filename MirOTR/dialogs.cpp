@@ -44,7 +44,7 @@ INT_PTR CALLBACK DlgSMPUpdateProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 			mir_sntprintf(title, 512, TranslateT(LANG_SMP_PROGRESS_DESC), name, proto);
 			mir_free(proto);
 			SetDlgItemText(hwndDlg, IDC_STC_SMP_HEADPRO, title);
-			SetWindowLongPtr(hwndDlg, GWL_USERDATA, (LONG_PTR)context);
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)context);
 
 			// Move window to screen center
 			// Get the owner window and dialog box rectangles. 
@@ -89,7 +89,7 @@ INT_PTR CALLBACK DlgSMPUpdateProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 
 	case WMU_REFRESHSMP:
 		{
-			ConnContext *context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+			ConnContext *context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 			SendDlgItemMessage(hwndDlg, IDC_PGB_SMP, PBM_SETPOS, wParam, 0);
 			switch (wParam) {
 				case 0:
@@ -107,11 +107,11 @@ INT_PTR CALLBACK DlgSMPUpdateProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 							if (context->active_fingerprint->trust &&
 								context->active_fingerprint->trust[0]) {
 									SetDlgItemText(hwndDlg, IDC_STC_SMP_PROGRESS, TranslateT(LANG_SMP_SUCCESS));
-							} else {
-								SetDlgItemText(hwndDlg, IDC_STC_SMP_PROGRESS, TranslateT(LANG_SMP_SUCCESS_VERIFY));
-							}
-						} else {
-							SetDlgItemText(hwndDlg, IDC_STC_SMP_PROGRESS, TranslateT(LANG_SMP_FAILED));
+									} else {
+										SetDlgItemText(hwndDlg, IDC_STC_SMP_PROGRESS, TranslateT(LANG_SMP_SUCCESS_VERIFY));
+										}
+									} else {
+										SetDlgItemText(hwndDlg, IDC_STC_SMP_PROGRESS, TranslateT(LANG_SMP_FAILED));
 						}
 					}
 					break;
@@ -124,7 +124,7 @@ INT_PTR CALLBACK DlgSMPUpdateProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM 
 		switch ( HIWORD( wParam )) {
 			case BN_CLICKED: 
 				{
-					ConnContext *context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+					ConnContext *context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 					switch ( LOWORD( wParam )) {
 						case IDCANCEL:
 							otr_abort_smp(context);
@@ -177,7 +177,7 @@ INT_PTR CALLBACK DlgSMPResponseProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 			mir_free(proto);
 			SendMessage(hwndDlg, WM_SETTEXT, 0, (LPARAM)buff);
 			SetDlgItemText(hwndDlg, IDC_STC_SMP_HEAD, buff);
-			SetWindowLongPtr(hwndDlg, GWL_USERDATA, (LONG_PTR)context);
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)context);
 
 			if (data->question) {
 				mir_sntprintf(buff, 512, TranslateT(LANG_OTR_SMPQUESTION_RESPOND_DESC), contact_get_nameT(context->app_data));
@@ -259,7 +259,7 @@ INT_PTR CALLBACK DlgSMPResponseProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 		switch ( HIWORD( wParam )) {
 			case BN_CLICKED: 
 				{
-				ConnContext *context = (ConnContext *)GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+				ConnContext *context = (ConnContext *)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 				switch ( LOWORD( wParam )) {	
 					case IDOK:
 						{
@@ -324,7 +324,7 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 			mir_free(proto);
 			SendMessage(hwndDlg, WM_SETTEXT, 0, (LPARAM)title);
 			SetDlgItemText(hwndDlg, IDC_STC_SMP_HEAD, title);
-			SetWindowLongPtr(hwndDlg, GWL_USERDATA, lParam);
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, lParam);
 
 			// Move window to screen center
 			// Get the owner window and dialog box rectangles. 
@@ -401,7 +401,7 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 		switch ( HIWORD( wParam )) {
 			case BN_CLICKED: 
 						{
-							ConnContext* context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+							ConnContext* context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 							TCHAR msg[1024];
 						switch ( LOWORD( wParam )) {
 							case IDCANCEL:
@@ -468,7 +468,7 @@ INT_PTR CALLBACK DlgProcSMPInitProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARA
 				switch ( LOWORD( wParam )) {	
 					case IDC_CBO_SMP_CHOOSE:
 						{ 
-							ConnContext* context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+							ConnContext* context = (ConnContext*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 							Fingerprint *fp = context->active_fingerprint;
 							if (!fp) {
 								EndDialog(hwndDlg, IDCANCEL);
@@ -624,7 +624,7 @@ INT_PTR CALLBACK DlgProcVerifyContext(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
 			SendMessage(hwndDlg, WM_SETTEXT, 0, (LPARAM)_T(LANG_OTR_FPVERIFY_TITLE));
 			SetDlgItemText(hwndDlg, IDC_STC_SMP_HEAD, _T(LANG_OTR_FPVERIFY_TITLE));
 			TranslateDialogDefault( hwndDlg );
-			SetWindowLongPtr(hwndDlg, GWL_USERDATA, lParam);
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, lParam);
 
 			// Move window to screen center
 			// Get the owner window and dialog box rectangles. 

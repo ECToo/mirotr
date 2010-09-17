@@ -43,7 +43,7 @@ VOID CALLBACK DeleteTimerProc(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTi
 
 
 // add prefix to sent messages
-INT_PTR OnDatabaseEventPreAdd(WPARAM wParam, LPARAM lParam) {
+int OnDatabaseEventPreAdd(WPARAM wParam, LPARAM lParam) {
 	if(!options.prefix_messages || !lParam) return 0;
 	HANDLE hContact = (HANDLE)wParam;
 	DBEVENTINFO *dbei = (DBEVENTINFO *)lParam;
@@ -177,7 +177,7 @@ INT_PTR OnDatabaseEventPreAdd(WPARAM wParam, LPARAM lParam) {
 	return 1;
 }
 
-INT_PTR OnDatabaseEventAdded(WPARAM wParam, LPARAM lParam) {
+int OnDatabaseEventAdded(WPARAM wParam, LPARAM lParam) {
 	if(!options.delete_history) return 0;
 
 	DBEVENTINFO info = {0};
@@ -267,7 +267,7 @@ int StatusModeChange(WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
-INT_PTR OnContactSettingChanged(WPARAM wParam, LPARAM lParam) {
+int OnContactSettingChanged(WPARAM wParam, LPARAM lParam) {
 	DBCONTACTWRITESETTING *cws = (DBCONTACTWRITESETTING *)lParam;
 	if (!lParam || strcmp(cws->szSetting, "Status") != 0) return 0;
 	HANDLE hContact = (HANDLE)wParam;

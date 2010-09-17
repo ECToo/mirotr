@@ -4,7 +4,7 @@
 #include "entities.h"
 
 //TODO: Social-Millionaire-Dialoge
-int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
+INT_PTR SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 	if(!lParam) return 0;
 
 	CCSDATA *ccs = (CCSDATA *) lParam;
@@ -56,38 +56,38 @@ int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 	}
 
 	char *username = contact_get_id(ccs->hContact);
-    err = otrl_message_sending(otr_user_state, &ops, (void*)ccs->hContact,
-	    proto, proto, username, oldmessage_utf, NULL, &newmessage,
-	    add_appdata, (void*)ccs->hContact);
+	err = otrl_message_sending(otr_user_state, &ops, (void*)ccs->hContact,
+		proto, proto, username, oldmessage_utf, NULL, &newmessage,
+		add_appdata, (void*)ccs->hContact);
 	if (tmpencode!= NULL || !(ccs->wParam & PREF_UTF)) mir_free(oldmessage_utf);
 	oldmessage_utf = NULL;
 	mir_free(username);
-
-    if (err && newmessage == NULL) {
-	/* Be *sure* not to send out plaintext */
-		ShowError(TranslateT(LANG_ENCRYPTION_ERROR));
-		/* should not be needed
-		char t[3] = {0, 0, 0};
+	
+		if (err && newmessage == NULL) {
+			/* Be *sure* not to send out plaintext */
+				ShowError(TranslateT(LANG_ENCRYPTION_ERROR));
+			/* should not be needed
+			char t[3] = {0, 0, 0};
 		if(ccs->wParam & PREF_UNICODE) { //TODO!! lstrlen(pre->szMessage)+1 ??
 			if (strlen(oldmessage)) memcpy(oldmessage, t,3 );
 		} else {
 			if (strlen(oldmessage)) memcpy(oldmessage, t, 1);
-		}
-		*/
-		return 1;
-    } else if (newmessage) {
-	/* Fragment the message if necessary, and send all but the last
-	 * fragment over the network.  We will send the last segment later */
-
-		// oldmessage_utf is not used anymore, so use it as buffer
-		err = otrl_message_fragment_and_send(&ops, (void*)ccs->hContact, context,
-		newmessage, OTRL_FRAGMENT_SEND_ALL_BUT_LAST, &oldmessage_utf);
-		// newmessage is not needed anymore
-		otrl_message_free(newmessage);
-		// move the last fragment to newmessage, oldmessage_utf will be buffer later
-		newmessage = oldmessage_utf;
-
-		WPARAM oldflags = ccs->wParam;
+			}
+			*/
+				return 1;
+				} else if (newmessage) {
+					/* Fragment the message if necessary, and send all but the last
+						* fragment over the network.  We will send the last segment later */
+						
+						// oldmessage_utf is not used anymore, so use it as buffer
+						err = otrl_message_fragment_and_send(&ops, (void*)ccs->hContact, context,
+						newmessage, OTRL_FRAGMENT_SEND_ALL_BUT_LAST, &oldmessage_utf);
+					// newmessage is not needed anymore
+						otrl_message_free(newmessage);
+					// move the last fragment to newmessage, oldmessage_utf will be buffer later
+						newmessage = oldmessage_utf;
+					
+						WPARAM oldflags = ccs->wParam;
 		if(ccs->wParam & PREF_UTF) {
 			ccs->lParam = (LPARAM)newmessage;
 		} else if(ccs->wParam & PREF_UNICODE) {
@@ -102,17 +102,17 @@ int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 			 ccs->lParam = (LPARAM)newmessage;
 		}
 		if (otr_context_get_trust(context) >= TRUST_UNVERIFIED) ccs->wParam;
-		int ret = CallService(MS_PROTO_CHAINSEND, wParam, lParam);
+		INT_PTR ret = CallService(MS_PROTO_CHAINSEND, wParam, lParam);
 
 /*#ifdef _DEBUG
 		if(ccs->wParam & PREF_UNICODE)
 			MessageBox(0, (wchar_t *)ccs->lParam, _T("OTR - sending raw message"), MB_OK);
 		else 
-			MessageBoxA(0, (char *)ccs->lParam, ("OTR - sending raw message"), MB_OK);
-#endif*/
-
-		// reset to original values
-		ccs->lParam = (LPARAM)oldmessage;
+		MessageBoxA(0, (char *)ccs->lParam, ("OTR - sending raw message"), MB_OK);
+		#endif*/
+		
+			// reset to original values
+			ccs->lParam = (LPARAM)oldmessage;
 		ccs->wParam = oldflags;
 		otrl_message_free(newmessage);
 		return ret;
@@ -122,7 +122,7 @@ int SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 	return CallService(MS_PROTO_CHAINSEND, wParam, lParam);
 }
 
-int SVC_OTRSendMessageW(WPARAM wParam, LPARAM lParam){
+INT_PTR SVC_OTRSendMessageW(WPARAM wParam, LPARAM lParam){
 	if(!lParam) return 0;
 
 	CCSDATA *ccs = (CCSDATA *) lParam;
@@ -137,7 +137,7 @@ int SVC_OTRSendMessageW(WPARAM wParam, LPARAM lParam){
 #define MESSAGE_PREFIX_LEN		6
 */
 
-int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
+INT_PTR SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 	//PUShowMessage("OTR Recv Message", SM_NOTIFY);
 	CCSDATA *ccs = (CCSDATA *) lParam;
 	PROTORECVEVENT *pre = (PROTORECVEVENT *) ccs->lParam;
@@ -180,20 +180,20 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 	BOOL ignore_msg;
 	ConnContext *context;
 	//NextExpectedSMP nextMsg;
-
+	
 	char *uname = contact_get_id(ccs->hContact);
 	lib_cs_lock();
 	ignore_msg = otrl_message_receiving(otr_user_state, &ops, (void*)ccs->hContact,
-		proto, proto, uname, oldmessage_utf,
-		&newmessage, &tlvs, add_appdata, (void*)ccs->hContact);
+	proto, proto, uname, oldmessage_utf,
+	&newmessage, &tlvs, add_appdata, (void*)ccs->hContact);
 	lib_cs_unlock();
 	mir_free(uname);
 
 	if( !(pre->flags & PREF_UTF)) mir_free(oldmessage_utf);
 	oldmessage_utf = NULL;
-
-
-	tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
+	
+		
+		tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
 	if (tlv) {
 		/* Notify the user that the other side disconnected. */
 		TCHAR buff[256];
@@ -202,103 +202,104 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 		ShowMessage((HANDLE)ccs->hContact, buff);
 
 		//if(options.timeout_finished) ResetFinishedTimer();
-	}
+		}
 
-	lib_cs_lock();
+		lib_cs_lock();
 	context = otrl_context_find_miranda(otr_user_state, ccs->hContact);
 	lib_cs_unlock();
 	/* Keep track of our current progress in the Socialist Millionaires'
-	* Protocol. */
-	
-	/*
-	if (context && ( (context->smstate->sm_prog_state == OTRL_SMP_PROG_CHEATED) ||
+		* Protocol. */
+		
+		/*
+			if (context && ( (context->smstate->sm_prog_state == OTRL_SMP_PROG_CHEATED) ||
 			otrl_tlv_find(tlvs, OTRL_TLV_SMP1Q) ||
 			otrl_tlv_find(tlvs, OTRL_TLV_SMP1) ||
 			otrl_tlv_find(tlvs, OTRL_TLV_SMP2) || 
 			otrl_tlv_find(tlvs, OTRL_TLV_SMP3) ||
 			otrl_tlv_find(tlvs, OTRL_TLV_SMP4) )
 			)
-	{
-		otr_abort_smp(context); // we do not support it (yet), notify partner to shorten wait time
-	}
-	*/
-
-
-	if (context) {
-		NextExpectedSMP nextMsg = context->smstate->nextExpected;
-
-		if (context->smstate->sm_prog_state == OTRL_SMP_PROG_CHEATED) {
-			otr_abort_smp(context);
-			//otrg_dialog_update_smp(context, 0.0);
-			SMPDialogUpdate(context, 0);
-			context->smstate->nextExpected = OTRL_SMP_EXPECT1;
-			context->smstate->sm_prog_state = OTRL_SMP_PROG_OK;
-		} else {
+			{
+			otr_abort_smp(context); // we do not support it (yet), notify partner to shorten wait time
+			}
+			*/
+		
 			
-			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1Q);
-			if (tlv) {
-				if (nextMsg != OTRL_SMP_EXPECT1)
-					otr_abort_smp(context);
-				else {
-					char *question = (char *)tlv->data;
-					char *eoq = (char*)memchr(question, '\0', tlv->len);
-					if (eoq) {
-						SMPDialogReply(context, question);
-					}
-				}
-			}
-			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1);
-			if (tlv) {
-				if (nextMsg != OTRL_SMP_EXPECT1)
-					otr_abort_smp(context);
-				else {
-					SMPDialogReply(context, NULL);
-				}
-			}
-			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP2);
-			if (tlv) {
-				if (nextMsg != OTRL_SMP_EXPECT2)
-					otr_abort_smp(context);
-				else {
-					context->smstate->nextExpected = OTRL_SMP_EXPECT4;
-					SMPDialogUpdate(context, 60);					
-				}
-			}
-			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP3);
-			if (tlv) {
-				if (nextMsg != OTRL_SMP_EXPECT3)
-					otr_abort_smp(context);
-				else {
-					context->smstate->nextExpected = OTRL_SMP_EXPECT1;
-					SMPDialogUpdate(context, 100);
-					//otrg_dialog_update_smp(context, 1.0);
-				}
-			}
-			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP4);
-			if (tlv) {
-				if (nextMsg != OTRL_SMP_EXPECT4)
-					otr_abort_smp(context);
-				else {
-					SMPDialogUpdate(context, 100);
-					//otrg_dialog_update_smp(context, 1.0);
-					context->smstate->nextExpected = OTRL_SMP_EXPECT1;
-				}
-			}
-			tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP_ABORT);
-			if (tlv) {
-				SMPDialogUpdate(context, 0);
-				context->smstate->nextExpected = OTRL_SMP_EXPECT1;
-			}
-		}
-	}
+			if (context) {
+				NextExpectedSMP nextMsg = context->smstate->nextExpected;
+				
+					if (context->smstate->sm_prog_state == OTRL_SMP_PROG_CHEATED) {
+						otr_abort_smp(context);
+						//otrg_dialog_update_smp(context, 0.0);
+							SMPDialogUpdate(context, 0);
+						context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+						context->smstate->sm_prog_state = OTRL_SMP_PROG_OK;
+						} else {
+									
+								tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1Q);
+							if (tlv) {
+								if (nextMsg != OTRL_SMP_EXPECT1)
+									otr_abort_smp(context);
+								else {
+									char *question = (char *)tlv->data;
+									char *eoq = (char*)memchr(question, '\0', tlv->len);
+									if (eoq) {
+										SMPDialogReply(context, question);
+										}
+									}
+								}
+							tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1);
+							if (tlv) {
+								if (nextMsg != OTRL_SMP_EXPECT1)
+									otr_abort_smp(context);
+								else {
+									SMPDialogReply(context, NULL);
+									}
+								}
+							tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP2);
+							if (tlv) {
+							if (nextMsg != OTRL_SMP_EXPECT2)
+								otr_abort_smp(context);
+							else {
+								context->smstate->nextExpected = OTRL_SMP_EXPECT4;
+									SMPDialogUpdate(context, 60);					
+									}
+								}
+							tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP3);
+							if (tlv) {
+								if (nextMsg != OTRL_SMP_EXPECT3)
+									otr_abort_smp(context);
+								else {
+									context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+									SMPDialogUpdate(context, 100);
+									//otrg_dialog_update_smp(context, 1.0);
+										}
+								}
+							tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP4);
+							if (tlv) {
+								if (nextMsg != OTRL_SMP_EXPECT4)
+									otr_abort_smp(context);
+							else {
+						            SMPDialogUpdate(context, 100);
+									//otrg_dialog_update_smp(context, 1.0);
+										context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+									}
+								}
+							tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP_ABORT);
+							if (tlv) {
+								SMPDialogUpdate(context, 0);
+							    context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+								}
+							}
+						}
 	otrl_tlv_free(tlvs);
 
 	/* If we're supposed to ignore this incoming message (because it's a
-	* protocol message), set it to NULL, so that other plugins that
-	* catch receiving-im-msg don't return 0, and cause it to be
-	* displayed anyway. */
-	if (ignore_msg) {
-		/* should not be required ;)
+	 * protocol message), set it to NULL, so that other plugins that
+     * catch receiving-im-msg don't return 0, and cause it to be
+	 * displayed anyway. */
+		if (ignore_msg) {
+			/* should not be required ;)
+			char t[3] = {0, 0, 0};
 		char t[3] = {0, 0, 0};
 		if(pre->flags & PREF_UNICODE) { //TODO!! lstrlen(pre->szMessage)+1 ??
 			if (pre->szMessage && strlen(pre->szMessage)) memcpy(pre->szMessage, t,3 );
@@ -306,11 +307,11 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 			if (pre->szMessage && strlen(pre->szMessage)) memcpy(pre->szMessage, t, 1);
 		}
 		*/
-		if (newmessage) otrl_message_free(newmessage);
-		return 1;
-	} else if (newmessage) {
-		//bool free=false;
-		DWORD flags = pre->flags;
+			if (newmessage) otrl_message_free(newmessage);
+			return 1;
+		} else if (newmessage) {
+			//bool free=false;
+					DWORD flags = pre->flags;
 		/* if(pre->flags & PREF_UTF) {
 			oldmessage_utf = newmessage;
 		} else if(pre->flags & PREF_UNICODE) { //TODO!! lstrlen(pre->szMessage)+1 ??
@@ -321,45 +322,45 @@ int SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 			 oldmessage_utf = newmessage;
 		} */ 
 
-		//pre->szMessage = oldmessage_utf;
-		pre->flags &= ~PREF_UNICODE;
-		pre->flags |= PREF_UTF; // just use UTF, so we do not have to recode the message
-
-		bool is_miralloc = false;
-		if (context) {
-			TrustLevel level = otr_context_get_trust(context);
-			if (level >= TRUST_UNVERIFIED) {
-				char* premsg;
-				if (db_byte_get(ccs->hContact, MODULENAME, "HTMLConv", 0)) {
-					premsg = striphtml(newmessage);
-					otrl_message_free(newmessage);
-					newmessage = premsg;
-					is_miralloc = true;
-				}
-
-				if (options.prefix_messages) {
-					DWORD len = (strlen(options.prefix)+strlen(newmessage)+1)*sizeof(char);
-					premsg = (char*)mir_alloc( len );
-					memset(premsg, 0, len);
-					strcpy(premsg, options.prefix);
-					strcat(premsg, newmessage);
-					(is_miralloc) ? mir_free(newmessage) : otrl_message_free(newmessage);
-					newmessage = premsg;
-					is_miralloc = true;
-				}
-			}
-		}
-		pre->szMessage = newmessage;
-		BOOL ret = CallService(MS_PROTO_CHAINRECV, wParam, lParam);
-		pre->flags = flags;
-		pre->szMessage = oldmessage;
-		if (is_miralloc)
-			mir_free(newmessage);
-		else
-			otrl_message_free(newmessage);
-
-		// if (free) mir_free(oldmessage_utf);
-		return ret;
+					//pre->szMessage = oldmessage_utf;
+					pre->flags &= ~PREF_UNICODE;
+					pre->flags |= PREF_UTF; // just use UTF, so we do not have to recode the message
+					
+						bool is_miralloc = false;
+					if (context) {
+						TrustLevel level = otr_context_get_trust(context);
+						if (level >= TRUST_UNVERIFIED) {
+							char* premsg;
+							if (db_byte_get(ccs->hContact, MODULENAME, "HTMLConv", 0)) {
+								premsg = striphtml(newmessage);
+								otrl_message_free(newmessage);
+								newmessage = premsg;
+								is_miralloc = true;
+								}
+							
+								if (options.prefix_messages) {
+									DWORD len = (strlen(options.prefix)+strlen(newmessage)+1)*sizeof(char);
+									premsg = (char*)mir_alloc( len );
+									memset(premsg, 0, len);
+									strcpy(premsg, options.prefix);
+									strcat(premsg, newmessage);
+									(is_miralloc) ? mir_free(newmessage) : otrl_message_free(newmessage);
+									newmessage = premsg;
+									is_miralloc = true;
+									}
+							}
+						}
+					pre->szMessage = newmessage;
+				BOOL ret = CallService(MS_PROTO_CHAINRECV, wParam, lParam);
+					pre->flags = flags;
+					pre->szMessage = oldmessage;
+					if (is_miralloc)
+						mir_free(newmessage);
+					else
+						otrl_message_free(newmessage);
+					
+						// if (free) mir_free(oldmessage_utf);
+						return ret;
 	}
 	return CallService(MS_PROTO_CHAINRECV, wParam, lParam);
 

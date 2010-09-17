@@ -12,7 +12,7 @@ int StartOTR(HANDLE hContact) {
 	if(!proto) return 1; // error
 	char *uname = contact_get_id(hContact);
 	if(!uname) return 1; // error
-	WORD pol = DBGetContactSettingWord(hContact, MODULENAME, "Policy", CONTACT_DEFAULT_POLICY);
+	DWORD pol = DBGetContactSettingDword(hContact, MODULENAME, "Policy", CONTACT_DEFAULT_POLICY);
 	if(pol == CONTACT_DEFAULT_POLICY) pol = options.default_policy;
 	
 	lib_cs_lock();
@@ -23,7 +23,7 @@ int StartOTR(HANDLE hContact) {
 	mir_free(uname);
 	return 0;
 }
-int SVC_StartOTR(WPARAM wParam, LPARAM lParam) {
+INT_PTR SVC_StartOTR(WPARAM wParam, LPARAM lParam) {
 	HANDLE hContact = (HANDLE)wParam, hSub;
 	if(options.bHaveMetaContacts && (hSub = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0) {
 		hContact = hSub;
@@ -45,7 +45,7 @@ int SVC_StartOTR(WPARAM wParam, LPARAM lParam) {
 
 	return 0;
 }
-int SVC_RefreshOTR(WPARAM wParam, LPARAM lParam) {
+INT_PTR SVC_RefreshOTR(WPARAM wParam, LPARAM lParam) {
 	HANDLE hContact = (HANDLE)wParam, hSub;
 	if(options.bHaveMetaContacts && (hSub = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0) {
 		hContact = hSub;
@@ -85,7 +85,7 @@ int otr_disconnect_contact(HANDLE hContact) {
 	return 0;
 }
 
-int SVC_StopOTR(WPARAM wParam, LPARAM lParam) {
+INT_PTR SVC_StopOTR(WPARAM wParam, LPARAM lParam) {
 	HANDLE hContact = (HANDLE)wParam;
 	
 	// prevent this filter from acting on injeceted messages for metas, when they are passed though the subcontact's proto send chain
@@ -100,7 +100,7 @@ int SVC_StopOTR(WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
-int SVC_VerifyOTR(WPARAM wParam, LPARAM lParam) {
+INT_PTR SVC_VerifyOTR(WPARAM wParam, LPARAM lParam) {
 	HANDLE hContact = (HANDLE)wParam;
 	ConnContext *context = otrl_context_find_miranda(otr_user_state, (HANDLE)wParam);
 	if (!context) return 1;
@@ -109,7 +109,7 @@ int SVC_VerifyOTR(WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
-int SVC_ToggleHTMLOTR(WPARAM wParam, LPARAM lParam) {
+INT_PTR SVC_ToggleHTMLOTR(WPARAM wParam, LPARAM lParam) {
 	HANDLE hContact = (HANDLE)wParam;
 	if (db_byte_get(hContact, MODULENAME, "HTMLConv", 0))
 		db_byte_set(hContact, MODULENAME, "HTMLConv", 0);
@@ -159,7 +159,7 @@ int SVC_PrebuildContactMenu(WPARAM wParam, LPARAM lParam) {
 	mi.flags = CMIM_FLAGS | CMIF_NOTOFFLINE | CMIF_TCHAR | CMIF_ICONFROMICOLIB;
 	
 	const char *proto = contact_get_proto(hContact);
-	WORD pol = CONTACT_DEFAULT_POLICY;
+	DWORD pol = CONTACT_DEFAULT_POLICY;
 	
 	if(!proto || DBGetContactSettingByte(hContact, proto, "ChatRoom", 0) == 1) {
 		goto hide_all;
@@ -173,7 +173,7 @@ int SVC_PrebuildContactMenu(WPARAM wParam, LPARAM lParam) {
 		proto = contact_get_proto(hContact);
 	}
 
-	pol = DBGetContactSettingWord(hContact, MODULENAME, "Policy", CONTACT_DEFAULT_POLICY);
+	pol = DBGetContactSettingDword(hContact, MODULENAME, "Policy", CONTACT_DEFAULT_POLICY);
 	if(pol == CONTACT_DEFAULT_POLICY) pol = options.default_policy;
 	
 	if(pol == OTRL_POLICY_NEVER || pol == OTRL_POLICY_ALWAYS) {

@@ -109,7 +109,7 @@ void LoadOptions() {
 	LoadFilenames();
 }
 
-extern "C" INT_PTR OpenOptions(WPARAM wParam, LPARAM lParam)
+extern "C" int OpenOptions(WPARAM wParam, LPARAM lParam)
 {
 	OPTIONSDIALOGPAGE odp = { 0 };
 	
@@ -525,7 +525,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 		{
 			TranslateDialogDefault( hwndDlg );
 
-			SetWindowLongPtr(hwndDlg, GWL_USERDATA, (ULONG_PTR) new ContactPolicyMap());
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (ULONG_PTR) new ContactPolicyMap());
 
 			HWND cmb = GetDlgItem(hwndDlg, IDC_CMB_CONT_POLICY);
 			SendMessage(cmb, CB_ADDSTRING, 0, (WPARAM)TranslateT(LANG_POLICY_DEFAULT));
@@ -637,7 +637,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 							lvi.iItem = iUser;
 							lvi.iSubItem = 0;
 							ListView_GetItem(GetDlgItem(hwndDlg, IDC_LV_CONT_CONTACTS), &lvi);
-							ContactPolicyMap* cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+							ContactPolicyMap* cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 							hContact = (HANDLE)lvi.lParam;
 							(*cpm)[hContact].policy = policy;
 							SendMessage(GetParent(hwndDlg), PSM_CHANGED, 0, 0);
@@ -653,7 +653,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 		if (code == (UINT) PSN_APPLY ) {
 			// handle apply
 
-			ContactPolicyMap *cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+			ContactPolicyMap *cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 			// Iterate over the map and print out all key/value pairs.
 			// Using a const_iterator since we are not going to change the values.
 			for(ContactPolicyMap::const_iterator it = cpm->begin(); it != cpm->end(); ++it)
@@ -685,7 +685,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 					SendDlgItemMessage(hwndDlg, IDC_LV_CONT_CONTACTS, LVM_GETITEM, 0, (LPARAM)&lvi);
 
 					HANDLE hContact = (HANDLE)lvi.lParam;
-					ContactPolicyMap *cp = (ContactPolicyMap *)GetWindowLong(hwndDlg, GWL_USERDATA);
+					ContactPolicyMap *cp = (ContactPolicyMap *)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 					TCHAR buff[50];
 					ListView_GetItemText(((LPNMHDR)lParam)->hwndFrom, lvi.iItem, 3, buff, 50);
 					if (_tcsncmp(buff, TranslateT(LANG_YES), 50)==0){
@@ -704,7 +704,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsContacts(HWND hwndDlg, UINT msg, WPARAM
 		}
 		}break;
 	case WM_DESTROY:
-		ContactPolicyMap *cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+		ContactPolicyMap *cpm = (ContactPolicyMap*) GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 		cpm->clear();
 		delete cpm;
 		break;
@@ -717,7 +717,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsFinger(HWND hwndDlg, UINT msg, WPARAM w
 	switch ( msg ) {
 	case WM_INITDIALOG: 
 		TranslateDialogDefault( hwndDlg );
-		SetWindowLongPtr(hwndDlg, GWL_USERDATA, (ULONG_PTR) new FPModifyMap());
+		SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (ULONG_PTR) new FPModifyMap());
 
 		SendDlgItemMessage(hwndDlg, IDC_LV_FINGER_LIST ,LVM_SETEXTENDEDLISTVIEWSTYLE, 0,LVS_EX_FULLROWSELECT);// | LVS_EX_CHECKBOXES);
 
@@ -793,7 +793,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsFinger(HWND hwndDlg, UINT msg, WPARAM w
 								ListView_SetItemText(lv,d, 2, (context->active_fingerprint == fp)? TranslateT(LANG_YES) : TranslateT(LANG_NO));
 								ListView_SetItemText(lv,d, 3, (fp->trust && fp->trust != '\0')? TranslateT(LANG_YES) : TranslateT(LANG_NO));
 								ListView_SetItemText(lv,d, 4, hash );
-							}
+								}
 							fp = fp->next;
 						}
 						mir_free(proto);
@@ -818,7 +818,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsFinger(HWND hwndDlg, UINT msg, WPARAM w
 								Fingerprint *fp = NULL;
 								ListView_GetItem(GetDlgItem(hwndDlg, IDC_LV_FINGER_LIST), &lvi);
 								fp = (Fingerprint*) lvi.lParam;
-								FPModifyMap* fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+								FPModifyMap* fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 								(*fpm)[fp] = FPM_NOTRUST;
 								ListView_SetItemText(GetDlgItem(hwndDlg, IDC_LV_FINGER_LIST), sel, 3, TranslateT(LANG_NO));
 								SendMessage(GetParent(hwndDlg), PSM_CHANGED, 0, 0);
@@ -834,7 +834,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsFinger(HWND hwndDlg, UINT msg, WPARAM w
 								Fingerprint *fp = NULL;
 								ListView_GetItem(GetDlgItem(hwndDlg, IDC_LV_FINGER_LIST), &lvi);
 								fp = (Fingerprint*) lvi.lParam;
-								FPModifyMap* fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+								FPModifyMap* fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 								(*fpm)[fp] = FPM_VERIFY;
 								ListView_SetItemText(GetDlgItem(hwndDlg, IDC_LV_FINGER_LIST), sel, 3, TranslateT(LANG_YES));
 								SendMessage(GetParent(hwndDlg), PSM_CHANGED, 0, 0);
@@ -856,7 +856,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsFinger(HWND hwndDlg, UINT msg, WPARAM w
 									mir_sntprintf(buff, 1024, TranslateT(LANG_FINGERPRINT_STILL_IN_USE), hash, contact_get_nameT((HANDLE)fp->context->app_data));
 									ShowError(buff);
 								} else {
-									FPModifyMap* fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+									FPModifyMap* fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 									(*fpm)[fp] = FPM_DELETE;
 									ListView_DeleteItem(GetDlgItem(hwndDlg, IDC_LV_FINGER_LIST), sel);
 									SendMessage(GetParent(hwndDlg), PSM_CHANGED, 0, 0);
@@ -871,7 +871,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsFinger(HWND hwndDlg, UINT msg, WPARAM w
 		if (((LPNMHDR)lParam)->code == (UINT) PSN_APPLY ) {
 			// handle apply
 
-			FPModifyMap *fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+			FPModifyMap *fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 			// Iterate over the map and print out all key/value pairs.
 			// Using a const_iterator since we are not going to change the values.
 			for(FPModifyMap::const_iterator it = fpm->begin(); it != fpm->end(); ++it)
@@ -910,7 +910,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsFinger(HWND hwndDlg, UINT msg, WPARAM w
 		}
 		break;
 	case WM_DESTROY:
-		FPModifyMap *fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWL_USERDATA);
+		FPModifyMap *fpm = (FPModifyMap*) GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 		fpm->clear();
 		delete fpm;
 		break;
