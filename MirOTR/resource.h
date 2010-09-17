@@ -32,6 +32,7 @@
 #define IDC_CHK_TIMEFINISH              1062
 #define IDC_CHK_ENDOFFLINE              1063
 #define IDC_CHK_ENDCLOSE                1064
+#define IDC_CHK_PREVENTSYSSAVE			1065
 
 // Proto policy & keys
 #define IDC_LV_PROTO_PROTOS				1101

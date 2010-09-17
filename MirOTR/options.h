@@ -27,7 +27,8 @@ typedef struct {
 	
 	bool timeout_finished;
 
-	bool no_history;
+	bool delete_history;
+	bool delete_systeminfo;
 	bool autoshow_verify;
 	
 	bool end_offline, end_window_close;

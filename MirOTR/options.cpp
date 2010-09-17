@@ -83,7 +83,8 @@ void LoadOptions() {
 	options.prefix_messages = (DBGetContactSettingByte(0, MODULENAME, "PrefixMessages", 0) == 1);
 	options.msg_inline = (DBGetContactSettingByte(0, MODULENAME, "MsgInline", 0) == 1);
 	options.msg_popup = (DBGetContactSettingByte(0, MODULENAME, "MsgPopup", 1) == 1);
-	options.no_history = (DBGetContactSettingByte(0, MODULENAME, "NoHistory", 0) == 1);
+	options.delete_history = (DBGetContactSettingByte(0, MODULENAME, "NoHistory", 0) == 1);
+	options.delete_systeminfo = (DBGetContactSettingByte(0, MODULENAME, "NoSystemHistory", 0) == 1);
 	options.autoshow_verify = (DBGetContactSettingByte(0, MODULENAME, "AutoShowVerify", 1) == 1);
 	
 	DBVARIANT dbv;
@@ -158,7 +159,8 @@ void SaveOptions() {
 	DBWriteContactSettingByte(0, MODULENAME, "MsgInline", options.msg_inline ? 1 : 0);
 	DBWriteContactSettingByte(0, MODULENAME, "MsgPopup", options.msg_popup ? 1 : 0);
 
-	DBWriteContactSettingByte(0, MODULENAME, "NoHistory", options.no_history ? 1 : 0);
+	DBWriteContactSettingByte(0, MODULENAME, "NoHistory", options.delete_history ? 1 : 0);
+	DBWriteContactSettingByte(0, MODULENAME, "NoSystemHistory", options.delete_systeminfo ? 1 : 0);
 	DBWriteContactSettingByte(0, MODULENAME, "AutoShowVerify", options.autoshow_verify ? 1 : 0);
 
 	/*
@@ -217,7 +219,8 @@ static INT_PTR CALLBACK DlgProcMirOTROpts(HWND hwndDlg, UINT msg, WPARAM wParam,
 		CheckDlgButton(hwndDlg, IDC_CHK_MSGINLINE, options.msg_inline ? TRUE : FALSE);
 		CheckDlgButton(hwndDlg, IDC_CHK_MSGPOPUP, options.msg_popup ? TRUE : FALSE);
 		CheckDlgButton(hwndDlg, IDC_CHK_TIMEFINISH, options.timeout_finished ? TRUE : FALSE);
-		CheckDlgButton(hwndDlg, IDC_CHK_PREVENTSAVE, options.no_history ? TRUE : FALSE);
+		CheckDlgButton(hwndDlg, IDC_CHK_PREVENTSAVE, options.delete_history ? TRUE : FALSE);
+		CheckDlgButton(hwndDlg, IDC_CHK_PREVENTSYSSAVE, options.delete_systeminfo ? TRUE : FALSE);
 		CheckDlgButton(hwndDlg, IDC_CHK_AUTOSHOW_VERIFY, options.autoshow_verify ? TRUE : FALSE);
 		CheckDlgButton(hwndDlg, IDC_CHK_ENDOFFLINE, options.end_offline ? TRUE : FALSE);
 		CheckDlgButton(hwndDlg, IDC_CHK_ENDCLOSE, options.end_window_close ? TRUE : FALSE);
@@ -273,7 +276,8 @@ static INT_PTR CALLBACK DlgProcMirOTROpts(HWND hwndDlg, UINT msg, WPARAM wParam,
 			options.msg_inline = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_MSGINLINE));
 			options.msg_popup = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_MSGPOPUP));
 			options.timeout_finished = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_TIMEFINISH));
-			options.no_history = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_PREVENTSAVE));
+			options.delete_history = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_PREVENTSAVE));
+			options.delete_systeminfo = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_PREVENTSYSSAVE));
 			options.autoshow_verify = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_AUTOSHOW_VERIFY));
 			options.end_offline = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_ENDOFFLINE));
 			options.end_window_close = (TRUE==IsDlgButtonChecked(hwndDlg, IDC_CHK_ENDCLOSE));

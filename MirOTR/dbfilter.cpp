@@ -178,7 +178,7 @@ INT_PTR OnDatabaseEventPreAdd(WPARAM wParam, LPARAM lParam) {
 }
 
 INT_PTR OnDatabaseEventAdded(WPARAM wParam, LPARAM lParam) {
-	if(!options.no_history) return 0;
+	if(!options.delete_history) return 0;
 
 	DBEVENTINFO info = {0};
 	info.cbSize = sizeof(info);
@@ -193,24 +193,27 @@ INT_PTR OnDatabaseEventAdded(WPARAM wParam, LPARAM lParam) {
 		if(info.eventType == EVENTTYPE_MESSAGE) {
 			HANDLE hContact = (HANDLE)wParam;
 			ConnContext *context = otrl_context_find_miranda(otr_user_state, hContact);
-			if (context && otr_context_get_trust(context) != TRUST_NOT_PRIVATE 
-				&& ( (info.flags&DBEF_UTF && !(info.cbBlob >lenutf && 0==strncmp((char*)info.pBlob, prefixutf, lenutf)))
-					|| (!(info.flags&DBEF_UTF) && !(info.cbBlob >len && 0==strncmp((char*)info.pBlob, prefix, len)))
+			if (context && otr_context_get_trust(context) != TRUST_NOT_PRIVATE ) {
+				// only delete encrypted messages that are no OTR system messages
+				if ( options.delete_systeminfo || 
+					((info.flags&DBEF_UTF && !(info.cbBlob >lenutf && 0==strncmp((char*)info.pBlob, prefixutf, lenutf)))
+						|| (!(info.flags&DBEF_UTF) && !(info.cbBlob >len && 0==strncmp((char*)info.pBlob, prefix, len)))
 					)
-				) // only delete encrypted messages that are no OTR system messages
-			{
-				DeleteEventNode *node = new DeleteEventNode();
-				node->hContact = hContact;
-				node->hDbEvent = (HANDLE) lParam;
-				node->timestamp = time(0);
-				node->next = 0;
-				EnterCriticalSection(lpRemoveChainCS);
-				if (DeleteEvents.last)
-					DeleteEvents.last->next = node;
-				else 
-					DeleteEvents.first = node;
-				DeleteEvents.last = node;
-				LeaveCriticalSection(lpRemoveChainCS);
+				)
+				{
+					DeleteEventNode *node = new DeleteEventNode();
+					node->hContact = hContact;
+					node->hDbEvent = (HANDLE) lParam;
+					node->timestamp = time(0);
+					node->next = 0;
+					EnterCriticalSection(lpRemoveChainCS);
+					if (DeleteEvents.last)
+						DeleteEvents.last->next = node;
+					else 
+						DeleteEvents.first = node;
+					DeleteEvents.last = node;
+					LeaveCriticalSection(lpRemoveChainCS);
+				}
 			}
 		}
 	}
