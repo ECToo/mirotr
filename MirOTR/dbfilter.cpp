@@ -177,7 +177,7 @@ int OnDatabaseEventPreAdd(WPARAM wParam, LPARAM lParam) {
 	return 1;
 }
 
-int OnDatabaseEventAdded(WPARAM wParam, LPARAM lParam) {
+ int OnDatabaseEventAdded(WPARAM wParam, LPARAM lParam) {
 	if(!options.delete_history) return 0;
 
 	DBEVENTINFO info = {0};
