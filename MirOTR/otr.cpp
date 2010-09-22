@@ -226,7 +226,6 @@ extern "C" {
 	/* A new fingerprint for the given user has been received. */
 	void otr_gui_new_fingerprint(void *opdata, OtrlUserState us, const char *accountname, const char *protocol, const char *username, unsigned char fingerprint[20]) {
 		DEBUGOUT_T("OTR_GUI_NEW_FUNGERPRINT")
-		//MessageBox(0, username, Translate("OTR New Fingerprint"), MB_OK);
 		ConnContext *context = otrl_context_find(us, username, accountname, protocol, TRUE, 0, add_appdata, opdata);
 		Fingerprint *fp = otrl_context_find_fingerprint(context, fingerprint, TRUE, 0);
 
@@ -253,7 +252,7 @@ extern "C" {
 		if(trusted == TRUST_PRIVATE) {
 			mir_sntprintf(buff, 1024, TranslateT(LANG_SESSION_START_OTR), contact_get_nameT((HANDLE)opdata));
 		} else if (trusted == TRUST_UNVERIFIED) {
-			if (options.autoshow_verify) VerifyContextDialog(context);
+			if (options.autoshow_verify) SMPInitDialog(context); //VerifyContextDialog(context);
 			mir_sntprintf(buff, 1024, TranslateT(LANG_SESSION_START_OTR_VERIFY), contact_get_nameT((HANDLE)opdata));
 		} else { // should never happen
 			mir_sntprintf(buff, 1024, TranslateT(LANG_SESSION_NOT_STARTED_OTR), contact_get_nameT((HANDLE)opdata));
@@ -286,7 +285,7 @@ extern "C" {
 			if(trusted == TRUST_PRIVATE) {
 				mir_sntprintf(buff, 1024, TranslateT(LANG_SESSION_CONTINUE_OTR), contact_get_nameT((HANDLE)opdata));
 			} else if (trusted == TRUST_UNVERIFIED) {
-				if (options.autoshow_verify) VerifyContextDialog(context);
+				if (options.autoshow_verify) SMPInitDialog(context); //VerifyContextDialog(context);
 				mir_sntprintf(buff, 1024, TranslateT(LANG_SESSION_CONTINUE_OTR_VERIFY), contact_get_nameT((HANDLE)opdata));
 			} else { // should never happen
 				mir_sntprintf(buff, 1024, TranslateT(LANG_SESSION_NOT_STARTED_OTR), contact_get_nameT((HANDLE)opdata));
