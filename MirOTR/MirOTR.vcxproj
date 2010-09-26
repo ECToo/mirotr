@@ -137,7 +137,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libgcrypt.lib;libotr.lib;Comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libgcrypt.lib;libotr.lib;Comctl32.lib;EkHtml.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\gpg.vs\bin.vs\libgcrypt\$(Platform)\debug\static;$(SolutionDir)\otr.vs\bin.vs\libotr\$(Platform)\debug\static;$(SolutionDir)\ekhtml\vc9\$(Platform)\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
