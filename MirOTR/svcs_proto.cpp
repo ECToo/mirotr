@@ -2,6 +2,10 @@
 #include "svcs_proto.h"
 #include "striphtml.h"
 #include "entities.h"
+#include <winuser.h>
+#include <sys\stat.h>
+#include <ole.h>
+#include <wtypes.h>
 
 //TODO: Social-Millionaire-Dialoge
 INT_PTR SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
@@ -104,20 +108,21 @@ INT_PTR SVC_OTRSendMessage(WPARAM wParam,LPARAM lParam){
 		if (otr_context_get_trust(context) >= TRUST_UNVERIFIED) ccs->wParam;
 		INT_PTR ret = CallService(MS_PROTO_CHAINSEND, wParam, lParam);
 
-/*#ifdef _DEBUG
+#ifdef _DEBUG
 		if(ccs->wParam & PREF_UNICODE)
-			MessageBox(0, (wchar_t *)ccs->lParam, _T("OTR - sending raw message"), MB_OK);
+			MessageBox(0, (const char *)ccs->lParam, _T("OTR - sending raw message"), MB_OK);
 		else 
-		MessageBoxA(0, (char *)ccs->lParam, ("OTR - sending raw message"), MB_OK);
-		#endif*/
+			MessageBoxA(0, (char *)ccs->lParam, ("OTR - sending raw message"), MB_OK);
+		#endif
 		
 			// reset to original values
+
 			ccs->lParam = (LPARAM)oldmessage;
 		ccs->wParam = oldflags;
 		otrl_message_free(newmessage);
 		return ret;
 
-    }
+	}
 
 	return CallService(MS_PROTO_CHAINSEND, wParam, lParam);
 }
@@ -144,7 +149,7 @@ INT_PTR SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 
 #ifdef _DEBUG
 	if(pre->flags & PREF_UNICODE)
-		MessageBox(0, (wchar_t *)pre->szMessage, _T("OTR - receiving message"), MB_OK);
+		MessageBox(0, (const char *)pre->szMessage, _T("OTR - receiving message"), MB_OK);
 	else 
 		MessageBoxA(0, (char *)pre->szMessage, ("OTR - receiving message"), MB_OK);
 #endif
@@ -279,7 +284,7 @@ INT_PTR SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 								if (nextMsg != OTRL_SMP_EXPECT4)
 									otr_abort_smp(context);
 							else {
-						            SMPDialogUpdate(context, 100);
+									SMPDialogUpdate(context, 100);
 									//otrg_dialog_update_smp(context, 1.0);
 										context->smstate->nextExpected = OTRL_SMP_EXPECT1;
 									}
@@ -287,7 +292,7 @@ INT_PTR SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 							tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP_ABORT);
 							if (tlv) {
 								SMPDialogUpdate(context, 0);
-							    context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+								context->smstate->nextExpected = OTRL_SMP_EXPECT1;
 								}
 							}
 						}
@@ -295,7 +300,7 @@ INT_PTR SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 
 	/* If we're supposed to ignore this incoming message (because it's a
 	 * protocol message), set it to NULL, so that other plugins that
-     * catch receiving-im-msg don't return 0, and cause it to be
+	 * catch receiving-im-msg don't return 0, and cause it to be
 	 * displayed anyway. */
 		if (ignore_msg) {
 			/* should not be required ;)
@@ -370,7 +375,7 @@ INT_PTR SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
  * are received. */
 void otr_abort_smp(ConnContext *context)
 {
-    otrl_message_abort_smp(otr_user_state, &ops, context->app_data, context);
+	otrl_message_abort_smp(otr_user_state, &ops, context->app_data, context);
 }
 
 /* Start the Socialist Millionaires' Protocol over the current connection,
@@ -379,8 +384,8 @@ void otr_abort_smp(ConnContext *context)
 void otr_start_smp(ConnContext *context, const char *question,
 	const unsigned char *secret, size_t secretlen)
 {
-    otrl_message_initiate_smp_q(otr_user_state, &ops, context->app_data,
-	    context, question, secret, secretlen);
+	otrl_message_initiate_smp_q(otr_user_state, &ops, context->app_data,
+		context, question, secret, secretlen);
 }
 
 /* Continue the Socialist Millionaires' Protocol over the current connection,
@@ -389,5 +394,5 @@ void otr_continue_smp(ConnContext *context,
 	const unsigned char *secret, size_t secretlen)
 {
 	otrl_message_respond_smp(otr_user_state, &ops, context->app_data,
-	    context, secret, secretlen);
+		context, secret, secretlen);
 }

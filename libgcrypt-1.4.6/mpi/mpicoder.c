@@ -46,11 +46,6 @@ mpi_read_from_buffer (const unsigned char *buffer, unsigned *ret_nread,
 /*       log_debug ("mpi too large (%u bits)\n", nbits); */
       goto leave;
     }
-  else if( !nbits ) 
-    {
-/*       log_debug ("an mpi of size 0 is not allowed\n"); */
-      goto leave;
-    }
   buffer += 2;
   nread = 2;
 
@@ -456,6 +451,10 @@ gcry_mpi_scan (struct gcry_mpi **ret_mpi, enum gcry_mpi_format format,
       const unsigned char *s = buffer;
       size_t n;
       
+      /* This test is not strictly necessary and an assert (!len)
+         would be sufficient.  We keep this test in case we later
+         allow the BUFLEN argument to act as a sanitiy check.  Same
+         below. */
       if (len && len < 4)
         return gcry_error (GPG_ERR_TOO_SHORT);
 

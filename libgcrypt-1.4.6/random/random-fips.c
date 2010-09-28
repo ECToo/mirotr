@@ -67,6 +67,7 @@
 #include "random.h"
 #include "rand-internal.h"
 #include "ath.h"
+#include <process.h>
 
 /* This is the lock we use to serialize access to this RNG.  The extra
    integer variable is only used to check the locking state; that is,
@@ -668,14 +669,14 @@ x931_reseed (rng_context_t rng_ctx)
          standard random generator.  */
       get_random (rng_ctx->seed_V, 16, std_rng_context);
       rng_ctx->is_seeded = 1;
-      rng_ctx->seed_init_pid = getpid ();
+      rng_ctx->seed_init_pid = _getpid();
     }
   else
     {
       /* The other two generators are seeded from /dev/random.  */
       x931_generate_seed (rng_ctx->seed_V, 16);
       rng_ctx->is_seeded = 1;
-      rng_ctx->seed_init_pid = getpid ();
+      rng_ctx->seed_init_pid = _getpid();
     }
 }
 
@@ -701,15 +702,15 @@ get_random (void *buffer, size_t length, rng_context_t rng_ctx)
         rng_ctx->cipher_hd = x931_generate_key (0);
       if (!rng_ctx->cipher_hd)
         goto bailout;
-      rng_ctx->key_init_pid = getpid ();
+      rng_ctx->key_init_pid = _getpid();
     }
 
   /* Initialize the seed value if needed.  */
   if (!rng_ctx->is_seeded)
     x931_reseed (rng_ctx);
 
-  if (rng_ctx->key_init_pid != getpid ()
-      || rng_ctx->seed_init_pid != getpid ())
+  if (rng_ctx->key_init_pid != _getpid()
+      || rng_ctx->seed_init_pid != _getpid())
     {
       /* We are in a child of us.  Because we have no way yet to do
          proper re-initialization (including self-checks etc), the
@@ -926,12 +927,12 @@ selftest_kat (selftest_report_func_t report)
           errtxt = "error setting key for RNG";
           goto leave;
         }
-      test_ctx->key_init_pid = getpid ();
+      test_ctx->key_init_pid = _getpid();
       
       /* Setup the seed.  */
       memcpy (test_ctx->seed_V, tv[tvidx].v, 16);
       test_ctx->is_seeded = 1;
-      test_ctx->seed_init_pid = getpid ();
+      test_ctx->seed_init_pid = _getpid();
       
       /* Setup a DT value.  */
       test_ctx->test_dt_ptr = tv[tvidx].dt;
@@ -962,8 +963,8 @@ selftest_kat (selftest_report_func_t report)
 
       /* This test is actual pretty pointless because we use a local test
          context.  */
-      if (test_ctx->key_init_pid != getpid ()
-          || test_ctx->seed_init_pid != getpid ())
+      if (test_ctx->key_init_pid != _getpid()
+          || test_ctx->seed_init_pid != _getpid())
         {
           errtxt = "fork detection failed";
           goto leave;
@@ -1049,12 +1050,12 @@ _gcry_rngfips_init_external_test (void **r_context, unsigned int flags,
   if (err)
     goto leave;
 
-  test_ctx->key_init_pid = getpid ();
+  test_ctx->key_init_pid = _getpid();
       
   /* Setup the seed.  */
   memcpy (test_ctx->seed_V, seed, seedlen);
   test_ctx->is_seeded = 1;
-  test_ctx->seed_init_pid = getpid ();
+  test_ctx->seed_init_pid = _getpid();
   
   /* Setup a DT value.  Because our context structure only stores a
      pointer we copy the DT value to the extra space we allocated in

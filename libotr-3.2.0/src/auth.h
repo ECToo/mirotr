@@ -24,52 +24,52 @@
 #include "dh.h"
 
 typedef enum {
-    OTRL_AUTHSTATE_NONE,
-    OTRL_AUTHSTATE_AWAITING_DHKEY,
-    OTRL_AUTHSTATE_AWAITING_REVEALSIG,
-    OTRL_AUTHSTATE_AWAITING_SIG,
-    OTRL_AUTHSTATE_V1_SETUP
+	OTRL_AUTHSTATE_NONE,
+	OTRL_AUTHSTATE_AWAITING_DHKEY,
+	OTRL_AUTHSTATE_AWAITING_REVEALSIG,
+	OTRL_AUTHSTATE_AWAITING_SIG,
+	OTRL_AUTHSTATE_V1_SETUP
 } OtrlAuthState;
 
 typedef struct {
-    OtrlAuthState authstate;              /* Our state */
+	OtrlAuthState authstate;              /* Our state */
 
-    DH_keypair our_dh;                    /* Our D-H key */
-    unsigned int our_keyid;               /* ...and its keyid */
+	DH_keypair our_dh;                    /* Our D-H key */
+	unsigned int our_keyid;               /* ...and its keyid */
 
-    unsigned char *encgx;                 /* The encrypted value of g^x */
-    size_t encgx_len;                     /*  ...and its length */
-    unsigned char r[16];                  /* The encryption key */
+	unsigned char *encgx;                 /* The encrypted value of g^x */
+	size_t encgx_len;                     /*  ...and its length */
+	unsigned char r[16];                  /* The encryption key */
 
-    unsigned char hashgx[32];             /* SHA256(g^x) */
+	unsigned char hashgx[32];             /* SHA256(g^x) */
 
-    gcry_mpi_t their_pub;                 /* Their D-H public key */
-    unsigned int their_keyid;             /*  ...and its keyid */
+	gcry_mpi_t their_pub;                 /* Their D-H public key */
+	unsigned int their_keyid;             /*  ...and its keyid */
 
-    gcry_cipher_hd_t enc_c, enc_cp;       /* c and c' encryption keys */
-    gcry_md_hd_t mac_m1, mac_m1p;         /* m1 and m1' MAC keys */
-    gcry_md_hd_t mac_m2, mac_m2p;         /* m2 and m2' MAC keys */
+	gcry_cipher_hd_t enc_c, enc_cp;       /* c and c' encryption keys */
+	gcry_md_hd_t mac_m1, mac_m1p;         /* m1 and m1' MAC keys */
+	gcry_md_hd_t mac_m2, mac_m2p;         /* m2 and m2' MAC keys */
 
-    unsigned char their_fingerprint[20];  /* The fingerprint of their
-					     long-term signing key */
+	unsigned char their_fingerprint[20];  /* The fingerprint of their
+						 long-term signing key */
 
-    int initiated;                        /* Did we initiate this
-					     authentication? */
+	int initiated;                        /* Did we initiate this
+						 authentication? */
 
-    unsigned int protocol_version;        /* The protocol version number
-					     used to authenticate. */
+	unsigned int protocol_version;        /* The protocol version number
+						 used to authenticate. */
 
-    unsigned char secure_session_id[20];  /* The secure session id */
-    size_t secure_session_id_len;         /* And its actual length,
-					     which may be either 20 (for
-					     v1) or 8 (for v2) */
-    OtrlSessionIdHalf session_id_half;    /* Which half of the session
-					     id gets shown in bold */
+	unsigned char secure_session_id[20];  /* The secure session id */
+	size_t secure_session_id_len;         /* And its actual length,
+						 which may be either 20 (for
+						 v1) or 8 (for v2) */
+	OtrlSessionIdHalf session_id_half;    /* Which half of the session
+						 id gets shown in bold */
 
-    char *lastauthmsg;                    /* The last auth message
-					     (base-64 encoded) we sent,
-					     in case we need to
-					     retransmit it. */
+	char *lastauthmsg;                    /* The last auth message
+						 (base-64 encoded) we sent,
+						 in case we need to
+						 retransmit it. */
 } OtrlAuthInfo;
 
 #include "privkey-t.h"
