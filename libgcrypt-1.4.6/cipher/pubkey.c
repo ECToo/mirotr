@@ -2722,7 +2722,7 @@ _gcry_pk_get_elements (int algo, char **enc, char **sig)
   
   if (sig)
 	{
-	  sig_cp = strdup (spec->elements_sig);
+	  sig_cp = _strdup (spec->elements_sig);
 	  if (! sig_cp)
 	{
 	  err = gpg_err_code_from_errno (errno);

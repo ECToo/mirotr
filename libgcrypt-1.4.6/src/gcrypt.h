@@ -212,20 +212,20 @@ struct gcry_thread_cbs
   int (*mutex_destroy) (void **priv);
   int (*mutex_lock) (void **priv);
   int (*mutex_unlock) (void **priv);
-  SSIZE_T (*read) (int fd, void *buf, size_t nbytes);
-  SSIZE_T (*write) (int fd, const void *buf, size_t nbytes);
+  ssize_t (*read) (int fd, void *buf, size_t nbytes);
+  ssize_t (*write) (int fd, const void *buf, size_t nbytes);
 #ifdef _WIN32
-  SSIZE_T (*select) (int nfd, void *rset, void *wset, void *eset,
+  ssize_t (*select) (int nfd, void *rset, void *wset, void *eset,
 			 struct timeval *timeout);
-  SSIZE_T (*waitpid) (pid_t pid, int *status, int options);
+  ssize_t (*waitpid) (pid_t pid, int *status, int options);
   int (*accept) (int s, void  *addr, int *length_ptr);
   int (*connect) (int s, void *addr, gcry_socklen_t length);
   int (*sendmsg) (int s, const void *msg, int flags);
   int (*recvmsg) (int s, void *msg, int flags);
 #else
-  SSIZE_T (*select) (int nfd, fd_set *rset, fd_set *wset, fd_set *eset,
+  ssize_t (*select) (int nfd, fd_set *rset, fd_set *wset, fd_set *eset,
 			 struct timeval *timeout);
-  SSIZE_T (*waitpid) (pid_t pid, int *status, int options);
+  ssize_t (*waitpid) (pid_t pid, int *status, int options);
   int (*accept) (int s, struct sockaddr *addr, gcry_socklen_t *length_ptr);
   int (*connect) (int s, struct sockaddr *addr, gcry_socklen_t length);
   int (*sendmsg) (int s, const struct msghdr *msg, int flags);
