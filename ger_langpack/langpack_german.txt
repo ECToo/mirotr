@@ -148,13 +148,12 @@ Kann OTR für '%s' nicht starten. SecureIM wird aktuell benutzt.
 OTR: SecureIM ist installiert
 [You are using SecureIM. MirOTR will only work for contacts with SecureIM disabled]
 Sie benutzen SecureIM. MirOTR funktioniert nur mit deaktiviertem SecureIM.
-
 [Your SRMM plugin does not support status icons. Not all OTR-functions are available!]
 Ihr SRMM-Plugin unterstützt keine Statusicons. Nicht alle OTR-Funktionen stehen zur Verfügung!
-
 [Private Data]
 Private Daten
-
+[Error setting up private conversation: %s]
+Fehler beim starten der privaten Konversation: %s
 [&Refresh OTR session]
 E&rneuere OTR-Sitzung
 [&Start OTR session]
