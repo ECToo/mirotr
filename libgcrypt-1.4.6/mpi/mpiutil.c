@@ -25,6 +25,7 @@
 
 #include "g10lib.h"
 #include "mpi-internal.h"
+#include "memory.h"
 #include "mod-source-info.h"
 
 

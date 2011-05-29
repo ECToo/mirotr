@@ -41,10 +41,10 @@
 #else
 # include <sys/socket.h>
 # include <sys/time.h>
-#@INSERT_SYS_SELECT_H@
 #endif /*!_WIN32*/
 
 @FALLBACK_SOCKLEN_T@
+
 
 /* This is required for error code compatibility. */
 #define _GCRY_ERR_SOURCE_DEFAULT GPG_ERR_SOURCE_GCRYPT
@@ -975,8 +975,7 @@ enum gcry_pk_algos
     GCRY_PK_ELG_E = 16,
     GCRY_PK_DSA   = 17,
     GCRY_PK_ELG   = 20,
-    GCRY_PK_ECDSA = 301,
-    GCRY_PK_ECDH  = 302
+    GCRY_PK_ECDSA = 301
   };
 
 /* Flags describing usage capabilities of a PK algorithm. */
@@ -1066,7 +1065,7 @@ enum gcry_md_algos
     GCRY_MD_SHA1    = 2,
     GCRY_MD_RMD160  = 3,
     GCRY_MD_MD2     = 5,
-    GCRY_MD_TIGER   = 6,   /* TIGER/192 as used by gpg <= 1.3.2. */
+    GCRY_MD_TIGER   = 6,   /* TIGER/192 as used by GnuPG <= 1.3.2. */
     GCRY_MD_HAVAL   = 7,   /* HAVAL, 5 pass, 160 bit. */
     GCRY_MD_SHA256  = 8,
     GCRY_MD_SHA384  = 9,
@@ -1077,7 +1076,7 @@ enum gcry_md_algos
     GCRY_MD_CRC32_RFC1510 = 303,
     GCRY_MD_CRC24_RFC2440 = 304,
     GCRY_MD_WHIRLPOOL = 305,
-    GCRY_MD_TIGER1  = 306, /* TIGER fixed.  */
+    GCRY_MD_TIGER1  = 306, /* TIGER (fixed).  */
     GCRY_MD_TIGER2  = 307  /* TIGER2 variant.   */
   };
 
@@ -1838,8 +1837,3 @@ int gcry_is_secure (const void *a) _GCRY_GCC_ATTR_PURE;
 }
 #endif
 #endif /* _GCRYPT_H */
-/*
-@emacs_local_vars_begin@
-@emacs_local_vars_read_only@
-@emacs_local_vars_end@
-*/

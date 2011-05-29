@@ -10,7 +10,7 @@ Plugins included: MirOTR
 ; ####################################################################
 
 ; Pluginname: MirOTR 
-; Version: 0.10.3.1 Beta
+; Version: 0.11.0.1 Beta
 ; Dateiname: mirotra (Ansi - alt), mirotr.dll (Unicode & x64)
 ; Autor: ProgAndy, CHEF-KOCH
 ; http://forum.miranda-im.de/index.php?topic=13574.0
@@ -148,12 +148,13 @@ Kann OTR für '%s' nicht starten. SecureIM wird aktuell benutzt.
 OTR: SecureIM ist installiert
 [You are using SecureIM. MirOTR will only work for contacts with SecureIM disabled]
 Sie benutzen SecureIM. MirOTR funktioniert nur mit deaktiviertem SecureIM.
+
 [Your SRMM plugin does not support status icons. Not all OTR-functions are available!]
 Ihr SRMM-Plugin unterstützt keine Statusicons. Nicht alle OTR-Funktionen stehen zur Verfügung!
+
 [Private Data]
 Private Daten
-[Error setting up private conversation: %s]
-Fehler beim starten der privaten Konversation: %s
+
 [&Refresh OTR session]
 E&rneuere OTR-Sitzung
 [&Start OTR session]
