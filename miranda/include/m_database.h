@@ -370,9 +370,6 @@ to a call of MS_DB_EVENT_GETTEXT (see below)
 Always returns 0.
 */
 
-#define DBEVENTTYPEDESCR_SIZE    sizeof(DBEVENTTYPEDESCR)
-#define DBEVENTTYPEDESCR_SIZE_V1 0x10
-
 typedef struct
 {
 	int   cbSize;      // structure size in bytes
@@ -385,6 +382,9 @@ typedef struct
 	DWORD flags;       // flags, combination of the DETF_*
 }
 	DBEVENTTYPEDESCR;
+
+#define DBEVENTTYPEDESCR_SIZE    sizeof(DBEVENTTYPEDESCR)
+#define DBEVENTTYPEDESCR_SIZE_V1 (offsetof(DBEVENTTYPEDESCR, textService))
 
 // constants for default event behaviour
 #define DETF_HISTORY    1   // show event in history
@@ -694,6 +694,7 @@ szFormat can have the following special characters:
   m  Time without minutes, eg hh
   d  Short date, eg dd/mm/yyyy
   D  Long date, eg d mmmm yyyy
+  I  ISO 8061 Time yyyy-mm-ddThh:mm:ssZ
 All other characters are copied across to szDest as-is
 */
 typedef struct {

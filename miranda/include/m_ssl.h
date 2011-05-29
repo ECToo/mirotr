@@ -21,6 +21,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#ifndef M_SSL_H__
+#define M_SSL_H__ 1
+
+#include <newpluginapi.h>
+
 DECLARE_HANDLE(HSSL);
 
 typedef struct
@@ -50,8 +55,10 @@ returns TRUE if all is Ok, and FALSE otherwise
 
 #define MS_SYSTEM_GET_SI "Miranda/System/GetSslApi"
 
-__forceinline int mir_getSI( SSL_API* dest )
+__forceinline INT_PTR mir_getSI( SSL_API* dest )
 {
 	dest->cbSize = sizeof(*dest);
 	return CallService(MS_SYSTEM_GET_SI, 0, (LPARAM)dest);
 }
+
+#endif // M_SSL_H__
