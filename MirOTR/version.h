@@ -22,8 +22,8 @@
 #define FILE_VERSION			VER_STRING
 #define FILE_DESCRIPTION		DESC_STRING
 #define INTERNAL_NAME			""
-#define LEGAL_COPYRIGHT			"© ProgAndy"
-#define LEGAL_COPYRIGHT_LONG	"© ProgAndy"
+#define LEGAL_COPYRIGHT			"© ProgAndy & CHEF-KOCH"
+#define LEGAL_COPYRIGHT_LONG	"© ProgAndy & CHEF-KOCH"
 #define LEGAL_TRADEMARKS		""
 #define ORIGINAL_FILENAME		"mirotr.dll"
 #define PRODUCT_NAME			DESC_STRING
