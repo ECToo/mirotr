@@ -91,19 +91,19 @@ void VerifyFingerprintMessage(ConnContext *context, bool verify) {
 /* Convert a 20-byte hash value to a 45-byte human-readable value */
 void otrl_privkey_hash_to_humanT(TCHAR human[45], const unsigned char hash[20])
 {
-    int word, byte;
-    TCHAR *p = human;
+	int word, byte;
+	TCHAR *p = human;
 
-    for(word=0; word<5; ++word) {
+	for(word=0; word<5; ++word) {
 	for(byte=0; byte<4; ++byte) {
-	    _stprintf(p, _T("%02X"), hash[word*4+byte]);
-	    p += 2;
+		_stprintf(p, _T("%02X"), hash[word*4+byte]);
+		p += 2;
 	}
 	*(p++) = ' ';
-    }
-    /* Change that last ' ' to a '\0' */
-    --p;
-    *p = '\0';
+	}
+	/* Change that last ' ' to a '\0' */
+	--p;
+	*p = '\0';
 }
 
 char* contact_get_id(HANDLE hContact, bool bNameOnError) {

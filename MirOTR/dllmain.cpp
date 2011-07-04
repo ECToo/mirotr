@@ -10,6 +10,7 @@ HINSTANCE hInst;
 PLUGINLINK *pluginLink;
 MM_INTERFACE mmi;
 UTF8_INTERFACE utfi;
+int hLangpack;
 char* g_metaproto;
 
 
@@ -22,14 +23,14 @@ PLUGININFOEX pluginInfo={
 	AUTHOR_MAIL,
 	LEGAL_COPYRIGHT_LONG,
 	HOMEPAGE,
-	UNICODE_AWARE,		//not transient
-	0,		//doesn't replace anything built-in
-    MIID_OTRPLUGIN  // ANSI and Unicode have different IDs
+	UNICODE_AWARE,		// not transient
+	0,					// doesn't replace anything built-in
+	MIID_OTRPLUGIN		// ANSI and Unicode have different IDs
 };
 
 BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+					   DWORD  ul_reason_for_call,
+					   LPVOID lpReserved
 					 )
 {
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
@@ -141,8 +142,11 @@ DLLFUNC int Load(PLUGINLINK *link)
 {
 	DEBUGOUT_T("LOAD MIROTR")
 	pluginLink=link;
+	mir_getLP( &pluginInfo );
 	mir_getMMI(&mmi);
 	mir_getUTFI(&utfi);
+	/* for timezones
+	 mir_getTMI(&tmi);  */
 	
 	CallService(MS_DB_SETSETTINGRESIDENT, TRUE, (LPARAM)(MODULENAME "/TrustLevel"));
 

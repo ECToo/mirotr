@@ -8,6 +8,7 @@
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // Selten verwendete Teile der Windows-Header nicht einbinden.
+
 // Windows-Headerdateien:
 #include <windows.h>
 #include <string.h>
@@ -23,25 +24,29 @@
 	#define DEBUGOUT_T(x)	
 #endif
 #define MIRANDA_VER    0x0800
- 
+#define MIRANDA_CUSTOM_LP
+
+//include
 #include <newpluginapi.h>
 #include <m_system.h>
 #include <m_langpack.h>
 #include <m_utils.h>
 #include <m_database.h>
-#include <m_folders.h>
 #include <m_clist.h>
 #include <m_message.h>
-#include <m_metacontacts.h>
 #include <m_protocols.h>
 #include <m_protomod.h>
 #include <m_protosvc.h>
-#include <m_updater.h>
 #include <m_popup.h>
 #include <m_contacts.h> 
 #include <m_utils.h>
 #include <m_icolib.h>
+
+//ExternalAPI
+#include <m_folders.h>
+#include <m_updater.h>
 #include <m_msg_buttonsbar.h>
+#include <m_metacontacts.h>
 
 #include <gcrypt.h>
 extern "C" {

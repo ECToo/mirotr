@@ -46,7 +46,7 @@
 #define LANG_OTR_NOTIFY						LPGEN("OTR %s (%s)")
 
 //#define LANG_FINGERPRINT_CAPTION			LPGEN("OTR New Fingerprint")
-//#define LANG_FINGERPRINT_ASK_VERIFY			LPGEN("OTR encrypted session with '%s'.\n\nFingerprint is UNVERIFIED.\n\n%s\n\nVerify?")
+//#define LANG_FINGERPRINT_ASK_VERIFY		LPGEN("OTR encrypted session with '%s'.\n\nFingerprint is UNVERIFIED.\n\n%s\n\nVerify?")
 //#define LANG_FINGERPRINT_ASK_NEW			LPGEN("A new fingerprint has been recieved from '%s'\n\n%s\n\nDo you trust it?")
 #define LANG_FINGERPRINT_VERIFIED			LPGEN("OTR encrypted session with '%s' is now using a VERIFIED fingerprint")
 #define LANG_FINGERPRINT_NOT_VERIFIED		LPGEN("OTR encrypted session with '%s' is now using a NOT VERIFIED fingerprint")

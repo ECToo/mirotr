@@ -79,9 +79,9 @@ typedef struct{
   char szSection[FOLDERS_NAME_MAX_SIZE];       //section name, if it doesn't exist it will be created otherwise it will just add this entry to it
   char szName[FOLDERS_NAME_MAX_SIZE];          //entry name - will be shown in options
   union{
-    const char *szFormat;                      //default string format. Fallback string in case there's no entry in the database for this folder. This should be the initial value for the path, users will be able to change it later.
-    const wchar_t *szFormatW;                  //String is dup()'d so you can free it later. If you set the unicode string don't forget to set the flag accordingly.
-    const TCHAR *szFormatT;
+	const char *szFormat;                      //default string format. Fallback string in case there's no entry in the database for this folder. This should be the initial value for the path, users will be able to change it later.
+	const wchar_t *szFormatW;                  //String is dup()'d so you can free it later. If you set the unicode string don't forget to set the flag accordingly.
+	const TCHAR *szFormatT;
   };
   DWORD flags;                                 //FF_* flags
 } FOLDERSDATA;
@@ -124,9 +124,9 @@ typedef struct{
 typedef struct{
   int cbSize;
   union{
-    char **szPath;                    //address of a string variable (char *) or (wchar_t*) where the path should be stored (the last \ won't be copied).
-    wchar_t **szPathW;                //unicode version of string.
-    TCHAR **szPathT;
+	char **szPath;                    //address of a string variable (char *) or (wchar_t*) where the path should be stored (the last \ won't be copied).
+	wchar_t **szPathW;                //unicode version of string.
+	TCHAR **szPathT;
 	};
 } FOLDERSGETALLOCDATA;
 

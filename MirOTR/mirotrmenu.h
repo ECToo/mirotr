@@ -24,7 +24,7 @@
 typedef struct {
 	int cbSize;	            //size in bytes of this structure
 	union {
-      char*  pszName;      //[TRANSLATED-BY-CORE] text of the menu item
+	  char*  pszName;      //[TRANSLATED-BY-CORE] text of the menu item
 		TCHAR* ptszName;     //Unicode text of the menu item
 	};
 	int position;           //approx position on the menu. lower numbers go nearer the top
@@ -32,7 +32,7 @@ typedef struct {
 	DWORD flags;            //set of MOMIF_* flags
 	union {
 		HICON hIcon;         //icon to put by the item. If this was not loaded from
-                           //a resource, you can delete it straight after the call
+						   //a resource, you can delete it straight after the call
 		HANDLE icolibItem;   //set CMIF_ICONFROMICOLIB to pass this value
 	};
 	DWORD hotKey;           //keyboard accelerator, same as lParam of WM_HOTKEY,0 for none
