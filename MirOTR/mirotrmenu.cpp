@@ -87,10 +87,14 @@ INT_PTR MirOTRMenuCheckService(WPARAM wParam,LPARAM)
 		return FALSE;
 
 	cmep = ( lpMirOTRMenuExecParam )pcpp->MenuItemOwnerData;
-	if ( cmep == NULL ) //this is root...build it
+	if ( cmep == NULL ) //this is rootsection...build it
 		return TRUE;
 
-	HANDLE hContact = (HANDLE)pcpp->wParam;
+    HANDLE hContact = (HANDLE)pcpp->wParam, hSub;
+    if(options.bHaveMetaContacts && (hSub = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0) {
+        hContact = hSub;
+    }
+	
 	TrustLevel level = ( TrustLevel )otr_context_get_trust(otrl_context_find_miranda(otr_user_state, hContact));
 	
 	mi.cbSize = sizeof(mi);
