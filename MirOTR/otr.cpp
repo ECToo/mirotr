@@ -268,7 +268,9 @@ extern "C" {
 		TCHAR buff[512];
 		mir_sntprintf(buff, 512, TranslateT(LANG_SESSION_TERMINATED_BY_OTR), contact_get_nameT((HANDLE)opdata));
 		//MessageBox(0, buff, Translate("OTR Information"), MB_OK);
-		ShowMessage((HANDLE)opdata, buff);
+		if(!Miranda_Terminated()) {
+         ShowMessage((HANDLE)opdata, buff);
+        }
 
 		// opdata is hContact
 		SetEncryptionStatus((HANDLE)opdata, otr_context_get_trust(context));

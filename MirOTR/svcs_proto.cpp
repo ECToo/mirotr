@@ -199,7 +199,7 @@ INT_PTR SVC_OTRRecvMessage(WPARAM wParam,LPARAM lParam){
 	
 		
 		tlv = otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED);
-	if (tlv) {
+	if (tlv && !Miranda_Terminated()) {
 		/* Notify the user that the other side disconnected. */
 		TCHAR buff[256];
 		mir_sntprintf(buff, 256, TranslateT(LANG_SESSION_TERMINATED_BY_OTR), contact_get_nameT(ccs->hContact));
