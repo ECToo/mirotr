@@ -77,6 +77,8 @@ void endtag_cb (void *cbdata, ekhtml_string_t *tag) {
 
 void data_cb (void *cbdata, ekhtml_string_t *text) {
 	STRIPHTML_DATA *data = (STRIPHTML_DATA *)cbdata;
+	if(text->len <= 0)
+        return;
 	char* s = (char*) mir_calloc(text->len+1);
 	decode_html_entities_utf8(s, text->str, text->len);
 
