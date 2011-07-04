@@ -5,10 +5,10 @@
 #define VER_MAJOR				0
 #define VER_MINOR				11
 #define VER_RELEASE				0
-#define VER_BUILD				0
+#define VER_BUILD				2
 
 #define __STRINGIZE(x)			#x
-#define VER_STRING				"0.11.0.0"
+#define VER_STRING				"0.11.0.2"
 
 #ifdef _UNICODE
 	#define SHORT_NAME_STRING 		"Miranda OTR"
