@@ -197,9 +197,17 @@ void SetEncryptionStatus(HANDLE hContact, TrustLevel level) {
 
 		if(!chat_room && options.bHaveMetaContacts) {
 			HANDLE hMeta = (HANDLE)CallService(MS_MC_GETMETACONTACT, (WPARAM)hContact, 0);
-			if(hMeta && hContact == (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hMeta, 0)) {
+			HANDLE hMostOnline = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hMeta, 0);
+			if(hMeta && hContact == hMostOnline) {
 				//strcat(dbg_msg, "\nrecursing for meta");
 				SetEncryptionStatus(hMeta, level);
+			}
+			else if(hMeta) {
+			/* in case the new most online contact has changed
+			   (e.g. when the otr subcontact goes offline) */
+			ConnContext *context = otrl_context_find_miranda(otr_user_state, hMostOnline);
+			TrustLevel encrypted = otr_context_get_trust(context);
+			SetEncryptionStatus(hMeta, encrypted);
 			}
 		}
 	}

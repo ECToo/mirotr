@@ -191,7 +191,11 @@ int OnDatabaseEventPreAdd(WPARAM wParam, LPARAM lParam) {
 	info.pBlob = (PBYTE)mir_alloc(info.cbBlob);
 	if(!CallService(MS_DB_EVENT_GET, (WPARAM)lParam, (LPARAM)&info)) {
 		if(info.eventType == EVENTTYPE_MESSAGE) {
-			HANDLE hContact = (HANDLE)wParam;
+			HANDLE hContact = (HANDLE)wParam, hSub;
+			if(options.bHaveMetaContacts && (hSub = (HANDLE)CallService
+			(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0) {
+			hContact = hSub;
+			}
 			ConnContext *context = otrl_context_find_miranda(otr_user_state, hContact);
 			if (context && otr_context_get_trust(context) != TRUST_NOT_PRIVATE ) {
 				// only delete encrypted messages that are no OTR system messages
@@ -242,7 +246,7 @@ void FinishSession(HANDLE hContact) {
 int StatusModeChange(WPARAM wParam, LPARAM lParam) {
 	int status = (int)wParam;
 
-	if(Miranda_Terminated() || status != ID_STATUS_OFFLINE ) return 0;
+	if(status != ID_STATUS_OFFLINE ) return 0;
 	
 	const char *proto = (char *)lParam;
 	HANDLE hContact;

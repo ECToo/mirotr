@@ -101,7 +101,10 @@ INT_PTR SVC_StopOTR(WPARAM wParam, LPARAM lParam) {
 }
 
 INT_PTR SVC_VerifyOTR(WPARAM wParam, LPARAM lParam) {
-	HANDLE hContact = (HANDLE)wParam;
+	HANDLE hContact = (HANDLE)wParam, hSub;
+	if(options.bHaveMetaContacts && (hSub = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0) {
+	hContact = hSub;
+	}
 	ConnContext *context = otrl_context_find_miranda(otr_user_state, (HANDLE)wParam);
 	if (!context) return 1;
 	//VerifyContextDialog(context);	
