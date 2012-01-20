@@ -269,8 +269,8 @@ extern "C" {
 		mir_sntprintf(buff, 512, TranslateT(LANG_SESSION_TERMINATED_BY_OTR), contact_get_nameT((HANDLE)opdata));
 		//MessageBox(0, buff, Translate("OTR Information"), MB_OK);
 		if(!Miranda_Terminated()) {
-         ShowMessage((HANDLE)opdata, buff);
-        }
+		 ShowMessage((HANDLE)opdata, buff);
+		}
 
 		// opdata is hContact
 		SetEncryptionStatus((HANDLE)opdata, otr_context_get_trust(context));
@@ -386,7 +386,7 @@ gcry_error_t otrl_privkey_write_FILEp(OtrlUserState us, FILE *privf);
 		 
 			 if (!privf) return gcry_error(GPG_ERR_NO_ERROR);
 		 
-			     
+				 
 			 
 			 /* Output the other keys we know */
 			 fprintf(privf, "(privkeys\n");

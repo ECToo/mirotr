@@ -409,16 +409,7 @@ static INT_PTR CALLBACK DlgProcMirOTROptsProto(HWND hwndDlg, UINT msg, WPARAM wP
 							temp = mir_a2t(fprint);
 							ListView_SetItemText(lv, ilvItem, 2, temp);
 							mir_free(temp);
-						}
-					/*} else { //using ASCII
-						item.pszText = (TCHAR*)pppDesc[i]->szName;
-						ilvItem = ListView_InsertItem(lv, &item);
-						if(otrl_privkey_fingerprint(otr_user_state, fprint, pppDesc[i]->szName, pppDesc[i]->szName)) {
-							ListView_SetItemText(lv, ilvItem, 2, (TCHAR*)fprint);
-						}
-					}*/
-
-					
+						}					
 				}
 			}
 		}

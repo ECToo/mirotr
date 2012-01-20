@@ -240,6 +240,32 @@ void FinishSession(HANDLE hContact) {
 	return;
 }
 
+int WindowEvent(WPARAM wParam, LPARAM lParam) {
+	MessageWindowEventData *mwd = (MessageWindowEventData *)lParam;
+
+	if(mwd->uType == MSG_WINDOW_EVT_CLOSE && options.end_window_close) {
+		FinishSession(mwd->hContact);
+		return 0;
+	}
+
+	if(mwd->uType != MSG_WINDOW_EVT_OPEN) return 0;
+	if(!options.bHaveSRMMIcons) return 0;
+
+	HANDLE hContact = mwd->hContact, hTemp;
+	if(options.bHaveMetaContacts && (hTemp = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0)
+		hContact = hTemp;
+
+	if(!CallService(MS_PROTO_ISPROTOONCONTACT, (WPARAM)hContact, (LPARAM)MODULENAME))
+		return 0;
+
+	lib_cs_lock();
+	ConnContext *context = otrl_context_find_miranda(otr_user_state, hContact);
+	lib_cs_unlock();
+
+	SetEncryptionStatus(hContact, otr_context_get_trust(context));
+
+	return 0;
+}
 
 // if it's a protocol going offline, attempt to send terminate session to all contacts of that protocol
 // (this would be hooked as the ME_CLIST_STATUSMODECHANGE handler except that event is sent *after* the proto goes offline)

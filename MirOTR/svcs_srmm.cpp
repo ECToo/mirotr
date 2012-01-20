@@ -4,31 +4,33 @@ HANDLE hEventIconPressed;
 HICON hIconNotSecure, hIconFinished, hIconPrivate, hIconUnverified;
 BBButton OTRButton;
 
-int WindowEvent(WPARAM wParam, LPARAM lParam) {
-	MessageWindowEventData *mwd = (MessageWindowEventData *)lParam;
-	
-	if(mwd->uType == MSG_WINDOW_EVT_CLOSE && options.end_window_close) {
-		// FinishSession(mwd->hContact);
-		return 0;
-	}	
-	if(mwd->uType != MSG_WINDOW_EVT_OPEN) return 0;
-	if(!options.bHaveSRMMIcons) return 0;
-	
-	HANDLE hContact = mwd->hContact, hTemp;
-	if(options.bHaveMetaContacts && (hTemp = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0)
-		hContact = hTemp;
-	
-	if(!CallService(MS_PROTO_ISPROTOONCONTACT, (WPARAM)hContact, (LPARAM)MODULENAME))
-		return 0;
-	
-	lib_cs_lock();
-	ConnContext *context = otrl_context_find_miranda(otr_user_state, hContact);
-	lib_cs_unlock();
-	
-	SetEncryptionStatus(hContact, otr_context_get_trust(context));
-	
-	return 0;
-}
+/* Plugin init and deinit */
+// int WindowEvent(WPARAM wParam, LPARAM lParam) {
+// 	MessageWindowEventData *mwd = (MessageWindowEventData *)lParam;
+// 	
+// 	if(mwd->uType == MSG_WINDOW_EVT_CLOSE && options.end_window_close) {
+// 		FinishSession(mwd->hContact);
+// 		return 0;
+// 	}
+// 
+// 	if(mwd->uType != MSG_WINDOW_EVT_OPEN) return 0;
+// 	if(!options.bHaveSRMMIcons) return 0;
+// 	
+// 	HANDLE hContact = mwd->hContact, hTemp;
+// 	if(options.bHaveMetaContacts && (hTemp = (HANDLE)CallService(MS_MC_GETMOSTONLINECONTACT, (WPARAM)hContact, 0)) != 0)
+// 		hContact = hTemp;
+// 	
+// 	if(!CallService(MS_PROTO_ISPROTOONCONTACT, (WPARAM)hContact, (LPARAM)MODULENAME))
+// 		return 0;
+// 	
+// 	lib_cs_lock();
+// 	ConnContext *context = otrl_context_find_miranda(otr_user_state, hContact);
+// 	lib_cs_unlock();
+// 	
+// 	SetEncryptionStatus(hContact, otr_context_get_trust(context));
+// 	
+// 	return 0;
+// }
 
 int SVC_IconPressed(WPARAM wParam, LPARAM lParam) {
 	HANDLE hContact = (HANDLE)wParam;

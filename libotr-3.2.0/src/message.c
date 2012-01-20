@@ -1285,8 +1285,8 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
 		 * (not us) is going to free() the *message pointer,
 		 * not g_free() it. */
 		const char *plainmsg = (*newmessagep) ? *newmessagep : message;
-		const char *format = "<b>The following message received "
-			"from %s was <i>not</i> encrypted: [</b>%s<b>]</b>";
+		const char *format = "The following message received "
+			"from %s was not encrypted: [</b>%s<b>]";
 		char *buf = malloc(strlen(format) + strlen(context->username)
 			+ strlen(plainmsg) - 3);
 			/* Remove "%s%s", add username + message + '\0' */

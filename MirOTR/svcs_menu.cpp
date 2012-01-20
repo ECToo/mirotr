@@ -4,8 +4,8 @@
 HANDLE hMenuBuildEvent, hStopItem, hStartItem;
 
 ////////////////////////////////
-///////// Menu Services
-///////////////////////
+///////// Menu Services ////////
+///////////////////////////////
 int StartOTR(HANDLE hContact) {
 	
 	const char *proto = contact_get_proto(hContact);
@@ -16,10 +16,10 @@ int StartOTR(HANDLE hContact) {
 	if(pol == CONTACT_DEFAULT_POLICY) pol = options.default_policy;
 	
 	lib_cs_lock();
-    char *msg = otrl_proto_default_query_msg(MODULENAME, pol);
-    otr_gui_inject_message(hContact, proto, proto, uname, msg ? msg : "?OTRv2?");
+	char *msg = otrl_proto_default_query_msg(MODULENAME, pol);
+	otr_gui_inject_message(hContact, proto, proto, uname, msg ? msg : "?OTRv2?");
 	lib_cs_unlock();
-    otrl_message_free(msg);
+	otrl_message_free(msg);
 	mir_free(uname);
 	return 0;
 }

@@ -23,7 +23,7 @@
 	#define DEBUGOUT(x)		
 	#define DEBUGOUT_T(x)	
 #endif
-#define MIRANDA_VER    0x0800
+#define MIRANDA_VER    0x0900
 #define MIRANDA_CUSTOM_LP
 
 //include
@@ -38,9 +38,11 @@
 #include <m_protomod.h>
 #include <m_protosvc.h>
 #include <m_popup.h>
-#include <m_contacts.h> 
+#include <m_contacts.h>
+#include <m_ignore.h>
 #include <m_utils.h>
 #include <m_icolib.h>
+#include <m_skin.h>
 
 //ExternalAPI
 #include <m_folders.h>

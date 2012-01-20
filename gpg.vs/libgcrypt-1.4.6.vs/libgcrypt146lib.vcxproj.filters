@@ -16,9 +16,6 @@
     <Filter Include="custom">
       <UniqueIdentifier>{9a4fc77e-6b4d-4277-9385-8101b650edfa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="removed">
-      <UniqueIdentifier>{6851c32c-cfe0-4e00-aac9-2b019272c14f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="random">
       <UniqueIdentifier>{5ba54782-b71a-4c1f-b2c8-b9de6456d734}</UniqueIdentifier>
     </Filter>
@@ -227,18 +224,6 @@
     </ClCompile>
     <ClCompile Include="..\..\libgcrypt-1.4.6\src\visibility.c">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libgcrypt-1.4.6\cipher\rndegd.c">
-      <Filter>removed</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libgcrypt-1.4.6\cipher\rndlinux.c">
-      <Filter>removed</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libgcrypt-1.4.6\cipher\rndunix.c">
-      <Filter>removed</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libgcrypt-1.4.6\cipher\tiger.c">
-      <Filter>removed</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libgcrypt-1.4.6\random\random-csprng.c">
       <Filter>random</Filter>

@@ -174,7 +174,7 @@ DLLFUNC int Load(PLUGINLINK *link)
 	while ( hContact != NULL ) {
 		proto = (char *)CallService(MS_PROTO_GETCONTACTBASEPROTO, (WPARAM)hContact, 0);
 
-		// do not add filter to chatoom
+		// do not add filter to a chatoom
 		if ( !(proto && DBGetContactSettingByte(hContact, proto, "ChatRoom", 0)) )
 			CallService( MS_PROTO_ADDTOCONTACT, ( WPARAM )hContact, ( LPARAM )MODULENAME );	
 
